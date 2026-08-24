@@ -1,6 +1,6 @@
 {
-  "generatedAtUtc": "2026-08-24T19:07:33.4920337+00:00",
-  "sourceCommit": "e8a7474b2a3a7426b56855f64c63a4a12e917eb7",
+  "generatedAtUtc": "2026-08-24T19:16:39.9129513+00:00",
+  "sourceCommit": "abfae6319b10a9e2031e1374fdc148c154430cc0",
   "scope": "ipad-build-only",
   "excludes": [
     "hub",
@@ -65,7 +65,7 @@
     {
       "path": "ipad/LuminaWidget/LuminaWidget.swift",
       "bytes": 14752,
-      "sha256": "12a95bec97f6ad999090bb60ea787a2eaec75580dd6a8179190de32ee6e94f70"
+      "sha256": "336accdf7c3b89a012e84d30e2bb06ac43797e2b0fb8dd25199b4111315f6ad1"
     },
     {
       "path": "ipad/scripts/export-build-only.ps1",
@@ -100,7 +100,7 @@
     {
       "path": "ipad/test/contract.test.mjs",
       "bytes": 17369,
-      "sha256": "5bf3e7bff798eb52dc7c100671df7a21e9f7fb3f4fb3697245e4e98a5a55a544"
+      "sha256": "20d2520c7a1cc34f100257d338c344b65035fe3eecaf929dadf0938721ad9514"
     },
     {
       "path": "ipad/LuminaPadTests/APIClientTests.swift",
