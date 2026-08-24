@@ -1,0 +1,6 @@
+id: swift-syntax-errors
+language: Swift
+severity: error
+message: Swift parser produced an ERROR node
+rule:
+  kind: ERROR

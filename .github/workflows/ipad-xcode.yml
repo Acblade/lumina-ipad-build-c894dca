@@ -1,0 +1,56 @@
+name: iPad Xcode verification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/ipad-xcode.yml"
+      - "ipad/**"
+      - "hub/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+  pull_request:
+    paths:
+      - ".github/workflows/ipad-xcode.yml"
+      - "ipad/**"
+      - "hub/**"
+      - "package.json"
+      - "pnpm-lock.yaml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ipad-xcode-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Xcode 16.4 / simulator + device artifact
+    runs-on: macos-15
+    timeout-minutes: 30
+    env:
+      DEVELOPER_DIR: /Applications/Xcode_16.4.app/Contents/Developer
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Verify simulator and compile an iPad device artifact
+        shell: bash
+        env:
+          LUMINA_EVIDENCE_DIR: ${{ github.workspace }}/artifacts
+        run: bash ipad/scripts/verify-apple.sh
+
+      - name: Upload Xcode evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: LuminaPad-Xcode-evidence
+          path: |
+            artifacts/
+            !artifacts/DerivedData/**
+            !artifacts/DeviceDerivedData/**
+            !artifacts/device-package/**
+          if-no-files-found: warn
+          retention-days: 14

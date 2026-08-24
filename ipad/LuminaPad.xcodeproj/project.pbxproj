@@ -1,0 +1,285 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {};
+	objectVersion = 60;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B00100000000000000000001 /* LuminaPadApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000001 /* LuminaPadApp.swift */; };
+		B00100000000000000000002 /* AppModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000002 /* AppModel.swift */; };
+		B00100000000000000000003 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000003 /* Components.swift */; };
+		B00100000000000000000004 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000004 /* RootView.swift */; };
+		B00100000000000000000005 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000005 /* DashboardView.swift */; };
+		B00100000000000000000006 /* DeviceDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000006 /* DeviceDetailView.swift */; };
+		B00100000000000000000007 /* ModesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000007 /* ModesView.swift */; };
+		B00100000000000000000008 /* ScenesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000008 /* ScenesView.swift */; };
+		B00100000000000000000009 /* SceneEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000009 /* SceneEditorView.swift */; };
+		B0010000000000000000000A /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000A /* SettingsView.swift */; };
+		B0010000000000000000000B /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000B /* Models.swift */; };
+		B0010000000000000000000C /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000C /* APIClient.swift */; };
+		B0010000000000000000000D /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000D /* SharedStore.swift */; };
+		B0010000000000000000000E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000011 /* Assets.xcassets */; };
+		B0010000000000000000000F /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000012 /* PrivacyInfo.xcprivacy */; };
+		B00100000000000000000010 /* LuminaWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000E /* LuminaWidget.swift */; };
+		B00100000000000000000011 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000B /* Models.swift */; };
+		B00100000000000000000012 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000C /* APIClient.swift */; };
+		B00100000000000000000013 /* SharedStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000D /* SharedStore.swift */; };
+		B00100000000000000000014 /* LuminaWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = F00100000000000000000018 /* LuminaWidget.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		B00100000000000000000015 /* ModelsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000000F /* ModelsTests.swift */; };
+		B00100000000000000000016 /* APIClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000010 /* APIClientTests.swift */; };
+		B00100000000000000000017 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001A /* XCTest.framework */; };
+		B00100000000000000000018 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = F00100000000000000000012 /* PrivacyInfo.xcprivacy */; };
+		B00100000000000000000019 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001B /* AppModelTests.swift */; };
+		B0010000000000000000001A /* WidgetActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001C /* WidgetActions.swift */; };
+		B0010000000000000000001B /* WidgetActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001C /* WidgetActions.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		C00100000000000000000001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = P00100000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = T00100000000000000000002;
+			remoteInfo = LuminaWidget;
+		};
+		C00100000000000000000002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = P00100000000000000000001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = T00100000000000000000001;
+			remoteInfo = LuminaPad;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D00100000000000000000001 /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (B00100000000000000000014 /* LuminaWidget.appex in Embed App Extensions */, );
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		F00100000000000000000001 /* LuminaPadApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LuminaPadApp.swift; sourceTree = "<group>"; };
+		F00100000000000000000002 /* AppModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModel.swift; sourceTree = "<group>"; };
+		F00100000000000000000003 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		F00100000000000000000004 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		F00100000000000000000005 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		F00100000000000000000006 /* DeviceDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDetailView.swift; sourceTree = "<group>"; };
+		F00100000000000000000007 /* ModesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModesView.swift; sourceTree = "<group>"; };
+		F00100000000000000000008 /* ScenesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScenesView.swift; sourceTree = "<group>"; };
+		F00100000000000000000009 /* SceneEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneEditorView.swift; sourceTree = "<group>"; };
+		F0010000000000000000000A /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		F0010000000000000000000B /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		F0010000000000000000000C /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		F0010000000000000000000D /* SharedStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedStore.swift; sourceTree = "<group>"; };
+		F0010000000000000000000E /* LuminaWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LuminaWidget.swift; sourceTree = "<group>"; };
+		F0010000000000000000000F /* ModelsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelsTests.swift; sourceTree = "<group>"; };
+		F00100000000000000000010 /* APIClientTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClientTests.swift; sourceTree = "<group>"; };
+		F00100000000000000000011 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F00100000000000000000012 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		F00100000000000000000013 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F00100000000000000000014 /* LuminaPad.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LuminaPad.entitlements; sourceTree = "<group>"; };
+		F00100000000000000000015 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F00100000000000000000016 /* LuminaWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LuminaWidget.entitlements; sourceTree = "<group>"; };
+		F00100000000000000000017 /* Lumina.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lumina.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F00100000000000000000018 /* LuminaWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LuminaWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F00100000000000000000019 /* LuminaPadTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LuminaPadTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F0010000000000000000001A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
+		F0010000000000000000001B /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
+		F0010000000000000000001C /* WidgetActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetActions.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		H00100000000000000000001 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		H00100000000000000000002 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+		H00100000000000000000003 /* Frameworks */ = {isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000017 /* XCTest.framework in Frameworks */, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		G00100000000000000000001 = {
+			isa = PBXGroup;
+			children = (
+				G00100000000000000000002 /* LuminaPad */,
+				G00100000000000000000003 /* LuminaShared */,
+				G00100000000000000000004 /* LuminaWidget */,
+				G00100000000000000000005 /* LuminaPadTests */,
+				G00100000000000000000007 /* Frameworks */,
+				G00100000000000000000006 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		G00100000000000000000002 /* LuminaPad */ = {
+			isa = PBXGroup;
+			children = (
+				F00100000000000000000001 /* LuminaPadApp.swift */,
+				F00100000000000000000002 /* AppModel.swift */,
+				F00100000000000000000003 /* Components.swift */,
+				F00100000000000000000004 /* RootView.swift */,
+				F00100000000000000000005 /* DashboardView.swift */,
+				F00100000000000000000006 /* DeviceDetailView.swift */,
+				F00100000000000000000007 /* ModesView.swift */,
+				F00100000000000000000008 /* ScenesView.swift */,
+				F00100000000000000000009 /* SceneEditorView.swift */,
+				F0010000000000000000000A /* SettingsView.swift */,
+				F00100000000000000000011 /* Assets.xcassets */,
+				F00100000000000000000012 /* PrivacyInfo.xcprivacy */,
+				F00100000000000000000013 /* Info.plist */,
+				F00100000000000000000014 /* LuminaPad.entitlements */,
+			);
+			path = LuminaPad;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000003 /* LuminaShared */ = {
+			isa = PBXGroup;
+			children = (
+				F0010000000000000000000B /* Models.swift */,
+				F0010000000000000000000C /* APIClient.swift */,
+				F0010000000000000000000D /* SharedStore.swift */,
+				F0010000000000000000001C /* WidgetActions.swift */,
+			);
+			path = LuminaShared;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000004 /* LuminaWidget */ = {
+			isa = PBXGroup;
+			children = (
+				F0010000000000000000000E /* LuminaWidget.swift */,
+				F00100000000000000000015 /* Info.plist */,
+				F00100000000000000000016 /* LuminaWidget.entitlements */,
+			);
+			path = LuminaWidget;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000005 /* LuminaPadTests */ = {
+			isa = PBXGroup;
+			children = (
+				F0010000000000000000000F /* ModelsTests.swift */,
+				F00100000000000000000010 /* APIClientTests.swift */,
+				F0010000000000000000001B /* AppModelTests.swift */,
+			);
+			path = LuminaPadTests;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000006 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F00100000000000000000017 /* Lumina.app */,
+				F00100000000000000000018 /* LuminaWidget.appex */,
+				F00100000000000000000019 /* LuminaPadTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		G00100000000000000000007 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (F0010000000000000000001A /* XCTest.framework */, );
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		T00100000000000000000001 /* LuminaPad */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = L00100000000000000000002 /* Build configuration list for PBXNativeTarget "LuminaPad" */;
+			buildPhases = (S00100000000000000000001 /* Sources */, H00100000000000000000001 /* Frameworks */, R00100000000000000000001 /* Resources */, D00100000000000000000001 /* Embed App Extensions */, );
+			buildRules = ();
+			dependencies = (Y00100000000000000000001 /* PBXTargetDependency */, );
+			name = LuminaPad;
+			productName = LuminaPad;
+			productReference = F00100000000000000000017 /* Lumina.app */;
+			productType = "com.apple.product-type.application";
+		};
+		T00100000000000000000002 /* LuminaWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = L00100000000000000000003 /* Build configuration list for PBXNativeTarget "LuminaWidget" */;
+			buildPhases = (S00100000000000000000002 /* Sources */, H00100000000000000000002 /* Frameworks */, R00100000000000000000002 /* Resources */, );
+			buildRules = ();
+			dependencies = ();
+			name = LuminaWidget;
+			productName = LuminaWidget;
+			productReference = F00100000000000000000018 /* LuminaWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		T00100000000000000000003 /* LuminaPadTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = L00100000000000000000004 /* Build configuration list for PBXNativeTarget "LuminaPadTests" */;
+			buildPhases = (S00100000000000000000003 /* Sources */, H00100000000000000000003 /* Frameworks */, R00100000000000000000003 /* Resources */, );
+			buildRules = ();
+			dependencies = (Y00100000000000000000002 /* PBXTargetDependency */, );
+			name = LuminaPadTests;
+			productName = LuminaPadTests;
+			productReference = F00100000000000000000019 /* LuminaPadTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		P00100000000000000000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1600;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					T00100000000000000000001 = {CreatedOnToolsVersion = 16.0; };
+					T00100000000000000000002 = {CreatedOnToolsVersion = 16.0; };
+					T00100000000000000000003 = {CreatedOnToolsVersion = 16.0; TestTargetID = T00100000000000000000001; };
+				};
+			};
+			buildConfigurationList = L00100000000000000000001 /* Build configuration list for PBXProject "LuminaPad" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = zh-Hans;
+			hasScannedForEncodings = 0;
+			knownRegions = (en, Base, "zh-Hans", );
+			mainGroup = G00100000000000000000001;
+			productRefGroup = G00100000000000000000006 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (T00100000000000000000001 /* LuminaPad */, T00100000000000000000002 /* LuminaWidget */, T00100000000000000000003 /* LuminaPadTests */, );
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		R00100000000000000000001 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B0010000000000000000000E /* Assets.xcassets in Resources */, B0010000000000000000000F /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		R00100000000000000000002 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000018 /* PrivacyInfo.xcprivacy in Resources */, ); runOnlyForDeploymentPostprocessing = 0; };
+		R00100000000000000000003 /* Resources */ = {isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		S00100000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000001, B00100000000000000000002, B00100000000000000000003, B00100000000000000000004, B00100000000000000000005, B00100000000000000000006, B00100000000000000000007, B00100000000000000000008, B00100000000000000000009, B0010000000000000000000A, B0010000000000000000000B, B0010000000000000000000C, B0010000000000000000000D, B0010000000000000000001A, ); runOnlyForDeploymentPostprocessing = 0; };
+		S00100000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000010, B00100000000000000000011, B00100000000000000000012, B00100000000000000000013, B0010000000000000000001B, ); runOnlyForDeploymentPostprocessing = 0; };
+		S00100000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000015, B00100000000000000000016, B00100000000000000000019, ); runOnlyForDeploymentPostprocessing = 0; };
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		Y00100000000000000000001 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = T00100000000000000000002 /* LuminaWidget */; targetProxy = C00100000000000000000001 /* PBXContainerItemProxy */; };
+		Y00100000000000000000002 /* PBXTargetDependency */ = {isa = PBXTargetDependency; target = T00100000000000000000001 /* LuminaPad */; targetProxy = C00100000000000000000002 /* PBXContainerItemProxy */; };
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		X00100000000000000000001 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)"; SWIFT_OPTIMIZATION_LEVEL = "-Onone"; }; name = Debug; };
+		X00100000000000000000002 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ALWAYS_SEARCH_USER_PATHS = NO; CLANG_ENABLE_MODULES = YES; ENABLE_STRICT_OBJC_MSGSEND = YES; GCC_C_LANGUAGE_STANDARD = gnu17; IPHONEOS_DEPLOYMENT_TARGET = 17.0; SDKROOT = iphoneos; SWIFT_COMPILATION_MODE = wholemodule; }; name = Release; };
+		X00100000000000000000003 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_ENTITLEMENTS = LuminaPad/LuminaPad.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_ASSET_PATHS = ""; ENABLE_PREVIEWS = YES; ENABLE_TESTABILITY = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LuminaPad/Info.plist; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.sigo.lumina.ipad; PRODUCT_MODULE_NAME = LuminaPad; PRODUCT_NAME = Lumina; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; }; name = Debug; };
+		X00100000000000000000004 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {ASSETCATALOG_COMPILER_ACCENT_COLOR_NAME = AccentColor; ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_ENTITLEMENTS = LuminaPad/LuminaPad.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_ASSET_PATHS = ""; ENABLE_PREVIEWS = YES; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LuminaPad/Info.plist; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks"; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.sigo.lumina.ipad; PRODUCT_MODULE_NAME = LuminaPad; PRODUCT_NAME = Lumina; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SUPPORTS_MACCATALYST = NO; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; VALIDATE_PRODUCT = YES; }; name = Release; };
+		X00100000000000000000005 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = LuminaWidget/LuminaWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LuminaWidget/Info.plist; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.sigo.lumina.ipad.widget; PRODUCT_NAME = LuminaWidget; SKIP_INSTALL = YES; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; }; name = Debug; };
+		X00100000000000000000006 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {APPLICATION_EXTENSION_API_ONLY = YES; CODE_SIGN_ENTITLEMENTS = LuminaWidget/LuminaWidget.entitlements; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = LuminaWidget/Info.plist; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks"; MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.sigo.lumina.ipad.widget; PRODUCT_NAME = LuminaWidget; SKIP_INSTALL = YES; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_EMIT_LOC_STRINGS = YES; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; VALIDATE_PRODUCT = YES; }; name = Release; };
+		X00100000000000000000007 /* Debug */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../../Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.sigo.lumina.ipad.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lumina.app/Lumina"; }; name = Debug; };
+		X00100000000000000000008 /* Release */ = {isa = XCBuildConfiguration; buildSettings = {BUNDLE_LOADER = "$(TEST_HOST)"; CODE_SIGN_STYLE = Automatic; CURRENT_PROJECT_VERSION = 1; GENERATE_INFOPLIST_FILE = YES; IPHONEOS_DEPLOYMENT_TARGET = 17.0; LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../../Frameworks"; PRODUCT_BUNDLE_IDENTIFIER = com.sigo.lumina.ipad.tests; PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator"; SWIFT_VERSION = 5.0; TARGETED_DEVICE_FAMILY = 2; TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Lumina.app/Lumina"; }; name = Release; };
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		L00100000000000000000001 /* Build configuration list for PBXProject "LuminaPad" */ = {isa = XCConfigurationList; buildConfigurations = (X00100000000000000000001 /* Debug */, X00100000000000000000002 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		L00100000000000000000002 /* Build configuration list for PBXNativeTarget "LuminaPad" */ = {isa = XCConfigurationList; buildConfigurations = (X00100000000000000000003 /* Debug */, X00100000000000000000004 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		L00100000000000000000003 /* Build configuration list for PBXNativeTarget "LuminaWidget" */ = {isa = XCConfigurationList; buildConfigurations = (X00100000000000000000005 /* Debug */, X00100000000000000000006 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+		L00100000000000000000004 /* Build configuration list for PBXNativeTarget "LuminaPadTests" */ = {isa = XCConfigurationList; buildConfigurations = (X00100000000000000000007 /* Debug */, X00100000000000000000008 /* Release */, ); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+/* End XCConfigurationList section */
+	};
+	rootObject = P00100000000000000000001 /* Project object */;
+}
