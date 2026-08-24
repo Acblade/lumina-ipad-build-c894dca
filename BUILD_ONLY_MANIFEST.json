@@ -1,6 +1,6 @@
 {
-  "generatedAtUtc": "2026-08-24T22:12:38.8472078+00:00",
-  "sourceCommit": "1deee4b3e9f6777a86368b2751a28ea1aece8fa0",
+  "generatedAtUtc": "2026-08-24T22:30:15.9440986+00:00",
+  "sourceCommit": "34a7c2a74b446ed11bc1357ce5ecebde12cc0e56",
   "scope": "ipad-build-only",
   "excludes": [
     "hub",
@@ -99,8 +99,8 @@
     },
     {
       "path": "ipad/test/contract.test.mjs",
-      "bytes": 18222,
-      "sha256": "6416dfe51607419a6b84f07c5501b9a68c5a87052ca97a04e8501d0cf7db17ef"
+      "bytes": 18335,
+      "sha256": "2f5be80f096ec48de87e01289b5726d749a3224655f48e2d8c6f473f58aaf420"
     },
     {
       "path": "ipad/LuminaPadTests/APIClientTests.swift",
@@ -149,8 +149,8 @@
     },
     {
       "path": "ipad/LuminaPad/DeviceDetailView.swift",
-      "bytes": 23557,
-      "sha256": "e301e1159301356b8fa421c1aa8a5610c4d1c008c88d1841c7adb7f63e34ddf1"
+      "bytes": 23675,
+      "sha256": "c16790cde88a8d5ff1d6d6f4b7a1abbf4cd3dadf0c9714ee1ecee60b4e86fa27"
     },
     {
       "path": "ipad/LuminaPad/Info.plist",

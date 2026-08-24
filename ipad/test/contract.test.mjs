@@ -89,6 +89,8 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(detail, /applySegments\(left: leftRGB, right: color\)/);
   assert.match(detail, /segmentRgb: \.init\(left: left, right: right\)/);
   assert.match(detail, /appearanceRequestPending/);
+  assert.match(detail, /let committed = selectedColor\(at:/);
+  assert.match(detail, /onCommit\(committed\)/);
   assert.match(appModel, /zoneControlTails/);
   assert.match(appModel, /await predecessor\?\.result/);
   assert.match(appModel, /guard zoneControlSequence\[queueKey\] == sequence/);

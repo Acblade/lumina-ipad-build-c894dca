@@ -462,10 +462,11 @@ private struct LuminaColorField: View {
             .contentShape(RoundedRectangle(cornerRadius: 28, style: .continuous))
             .gesture(
                 DragGesture(minimumDistance: 0)
-                    .onChanged { update($0.location, in: proxy.size) }
+                    .onChanged { color = selectedColor(at: $0.location, in: proxy.size) }
                     .onEnded {
-                        update($0.location, in: proxy.size)
-                        onCommit(color)
+                        let committed = selectedColor(at: $0.location, in: proxy.size)
+                        color = committed
+                        onCommit(committed)
                     }
             )
         }
@@ -484,13 +485,13 @@ private struct LuminaColorField: View {
         )
     }
 
-    private func update(_ point: CGPoint, in size: CGSize) {
-        guard enabled, size.width > 0, size.height > 0 else { return }
+    private func selectedColor(at point: CGPoint, in size: CGSize) -> RGBColor {
+        guard enabled, size.width > 0, size.height > 0 else { return color }
         let hue = min(max(point.x / size.width, 0), 1)
         let vertical = min(max(point.y / size.height, 0), 1)
         let saturation = vertical <= 0.5 ? vertical * 2 : 1
         let brightness = vertical <= 0.5 ? 1 : 2 - vertical * 2
-        color = RGBColor(hue: hue, saturation: saturation, brightness: brightness)
+        return RGBColor(hue: hue, saturation: saturation, brightness: brightness)
     }
 }
 
