@@ -1,0 +1,38 @@
+name: Build shared-Keychain xTool
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Clone pinned xTool source
+        run: git clone --depth 1 --branch 1.17.0 https://github.com/xtool-org/xtool.git xtool-src
+
+      - name: Apply scoped shared-Keychain patch
+        run: git -C xtool-src apply "$GITHUB_WORKSPACE/ci/xtool-shared-keychain.patch"
+
+      - name: Build release binary
+        working-directory: xtool-src
+        env:
+          XTOOL_VERSION: 1.17.0-lumina-shared-keychain
+        run: swift build -c release --product xtool
+
+      - name: Record binary hash
+        run: sha256sum xtool-src/.build/release/xtool | tee xtool-sha256.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lumina-xtool-shared-keychain
+          path: |
+            xtool-src/.build/release/xtool
+            xtool-sha256.txt
+          if-no-files-found: error
+          retention-days: 1
