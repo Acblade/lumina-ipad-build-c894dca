@@ -63,6 +63,8 @@ private struct ZoneControlPanel: View {
     @State private var rightRGB: RGBColor
     @State private var leftHex: String
     @State private var rightHex: String
+    @State private var pendingAppearanceRevision = 0
+    @State private var appearanceRequestPending = false
 
     init(device: Device, capability: ZoneCapability) {
         self.device = device
@@ -159,14 +161,11 @@ private struct ZoneControlPanel: View {
                         let kelvin = Int(value.rounded())
                         selectedRGB = mappedColor(forKelvin: kelvin, minimum: range.min, maximum: range.max)
                         hex = selectedRGB.hex
-                        Task {
-                            await model.control(
-                                deviceID: device.id,
-                                action: mapsTemperatureToRGB
-                                    ? .init(zone: capability.id, power: true, rgb: selectedRGB)
-                                    : .init(zone: capability.id, power: true, colorTemperatureKelvin: kelvin)
-                            )
-                        }
+                        submitAppearance(
+                            mapsTemperatureToRGB
+                                ? .init(zone: capability.id, power: true, rgb: selectedRGB)
+                                : .init(zone: capability.id, power: true, colorTemperatureKelvin: kelvin)
+                        )
                     }
                 }
             }
@@ -247,20 +246,20 @@ private struct ZoneControlPanel: View {
 
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("左侧").font(.headline)
-                    LuminaColorField(color: $leftRGB, enabled: canControl) { color in
-                        leftHex = color.hex
-                        applySegments()
-                    }
+                     Text("左侧").font(.headline)
+                     LuminaColorField(color: $leftRGB, enabled: canControl) { color in
+                         leftHex = color.hex
+                         applySegments(left: color, right: rightRGB)
+                     }
                     .frame(height: 220)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("右侧").font(.headline)
-                    LuminaColorField(color: $rightRGB, enabled: canControl) { color in
-                        rightHex = color.hex
-                        applySegments()
-                    }
+                     Text("右侧").font(.headline)
+                     LuminaColorField(color: $rightRGB, enabled: canControl) { color in
+                         rightHex = color.hex
+                         applySegments(left: leftRGB, right: color)
+                     }
                     .frame(height: 220)
                 }
             }
@@ -271,14 +270,14 @@ private struct ZoneControlPanel: View {
                     text: $leftHex,
                     enabled: canControl,
                     onColorChange: { leftRGB = $0 },
-                    onApply: { color in leftRGB = color; applySegments() }
+                    onApply: { color in applySegments(left: color, right: rightRGB) }
                 )
                 SegmentHexApplyField(
                     label: "右侧色号",
                     text: $rightHex,
                     enabled: canControl,
                     onColorChange: { rightRGB = $0 },
-                    onApply: { color in rightRGB = color; applySegments() }
+                    onApply: { color in applySegments(left: leftRGB, right: color) }
                 )
             }
         }
@@ -292,34 +291,39 @@ private struct ZoneControlPanel: View {
                 leftHex = color.hex
                 rightHex = color.hex
             }
-            Task {
-                await model.control(
-                    deviceID: device.id,
-                    action: .init(zone: capability.id, power: true, rgb: color)
-                )
-            }
+            submitAppearance(.init(zone: capability.id, power: true, rgb: color))
         } else if let range = capability.colorTemperature {
             let kelvin = mappedKelvin(color, minimum: range.min, maximum: range.max)
             temperature = Double(kelvin)
-            Task {
-                await model.control(
-                    deviceID: device.id,
-                    action: .init(zone: capability.id, power: true, colorTemperatureKelvin: kelvin)
-                )
-            }
+            submitAppearance(.init(zone: capability.id, power: true, colorTemperatureKelvin: kelvin))
         }
     }
 
-    private func applySegments() {
+    private func applySegments(left: RGBColor, right: RGBColor) {
+        leftRGB = left
+        rightRGB = right
+        leftHex = left.hex
+        rightHex = right.hex
+        submitAppearance(
+            .init(
+                zone: capability.id,
+                power: true,
+                segmentRgb: .init(left: left, right: right)
+            )
+        )
+    }
+
+    private func submitAppearance(_ action: DeviceControlRequest) {
+        pendingAppearanceRevision += 1
+        let revision = pendingAppearanceRevision
+        appearanceRequestPending = true
         Task {
             await model.control(
                 deviceID: device.id,
-                action: .init(
-                    zone: capability.id,
-                    power: true,
-                    segmentRgb: .init(left: leftRGB, right: rightRGB)
-                )
+                action: action
             )
+            guard pendingAppearanceRevision == revision else { return }
+            appearanceRequestPending = false
         }
     }
 
@@ -327,7 +331,7 @@ private struct ZoneControlPanel: View {
         if let range = capability.brightness {
             brightness = Double(min(max(state.brightness, range.min), range.max))
         }
-        if let range = capability.colorTemperature {
+        if !appearanceRequestPending, let range = capability.colorTemperature {
             if mapsTemperatureToRGB, let rgb = state.rgb {
                 temperature = Double(mappedKelvin(rgb, minimum: range.min, maximum: range.max))
             } else if let kelvin = state.colorTemperatureKelvin {
@@ -338,11 +342,11 @@ private struct ZoneControlPanel: View {
                 hex = selectedRGB.hex
             }
         }
-        if let rgb = state.rgb {
+        if !appearanceRequestPending, let rgb = state.rgb {
             selectedRGB = rgb
             hex = rgb.hex
         }
-        if let segment = state.segmentRgb {
+        if !appearanceRequestPending, let segment = state.segmentRgb {
             leftRGB = segment.left
             rightRGB = segment.right
             leftHex = segment.left.hex

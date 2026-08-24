@@ -25,6 +25,8 @@ final class AppModel: ObservableObject {
     private let settings: any ConnectionStore
     private let cache: any CacheStore
     private var refreshTask: Task<Void, Never>?
+    private var zoneControlSequence: [String: Int] = [:]
+    private var zoneControlTails: [String: Task<Void, Never>] = [:]
 
     init(
         api: LuminaAPIClient = .shared,
@@ -40,7 +42,10 @@ final class AppModel: ObservableObject {
         scenes = cache.loadScenes()
     }
 
-    deinit { refreshTask?.cancel() }
+    deinit {
+        refreshTask?.cancel()
+        zoneControlTails.values.forEach { $0.cancel() }
+    }
 
     var activeRuns: [RunInfo] {
         runs.filter { ["running", "scheduled"].contains($0.status ?? "") }
@@ -202,16 +207,34 @@ final class AppModel: ObservableObject {
 
     func control(deviceID: String, action: DeviceControlRequest) async {
         guard isConfigured else { presentConfigurationError(); return }
-        let previous = devices
+        let zoneID = action.zone ?? "main"
+        let queueKey = "\(deviceID)\u{0}\(zoneID)"
+        let sequence = (zoneControlSequence[queueKey] ?? 0) + 1
+        zoneControlSequence[queueKey] = sequence
+        let predecessor = zoneControlTails[queueKey]
         applyOptimistic(deviceID: deviceID, action: action)
-        do {
-            try await api.control(connection, deviceID: deviceID, action: action)
-            await refreshDevices()
-        } catch {
-            devices = previous
-            present(error)
-            await refreshDevices()
+
+        let operation = Task { [weak self, api, connection] in
+            _ = await predecessor?.result
+            guard !Task.isCancelled else { return }
+            do {
+                try await api.control(connection, deviceID: deviceID, action: action)
+                await self?.finishZoneControl(queueKey: queueKey, sequence: sequence)
+            } catch {
+                await self?.finishZoneControl(queueKey: queueKey, sequence: sequence, error: error)
+            }
         }
+        zoneControlTails[queueKey] = operation
+        await operation.value
+    }
+
+    private func finishZoneControl(queueKey: String, sequence: Int, error: Error? = nil) async {
+        // Older requests are still sent in order, but they may never overwrite
+        // the UI state or surface an error after a newer user action exists.
+        guard zoneControlSequence[queueKey] == sequence else { return }
+        zoneControlTails[queueKey] = nil
+        if let error { present(error) }
+        await refreshDevices()
     }
 
     func setAllPower(_ power: Bool) async {
