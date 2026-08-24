@@ -9,9 +9,10 @@ struct SceneEditorView: View {
     @State private var editingSchedule: IndexedSchedule?
     @State private var showingNewSchedule = false
     @State private var showingDiscardConfirmation = false
+    private let sceneIcons = ["🌙", "☀️", "🎬", "📖", "🎮", "✨", "🌈", "🕯️"]
 
     init(scene: Scene?) {
-        let initial = scene ?? Scene(name: "新场景", icon: "sparkles", color: "#5856D6")
+        let initial = scene ?? Scene(name: "新场景", icon: "✨", color: "#5856D6")
         original = initial
         _draft = State(initialValue: initial)
     }
@@ -21,10 +22,26 @@ struct SceneEditorView: View {
             Form {
                 Section("基本信息") {
                     TextField("场景名称", text: $draft.name)
-                    TextField("SF Symbol 或兼容图标名称", text: Binding(
-                        get: { draft.icon ?? "" },
-                        set: { draft.icon = $0.isEmpty ? nil : $0 }
-                    ))
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            ForEach(sceneIcons, id: \.self) { icon in
+                                Button {
+                                    draft.icon = icon
+                                } label: {
+                                    Text(icon)
+                                        .font(.title2)
+                                        .frame(width: 46, height: 42)
+                                        .background(
+                                            draft.icon == icon ? LuminaTheme.selectedNavigation : LuminaTheme.cloud,
+                                            in: Capsule()
+                                        )
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityLabel("场景图标 \(icon)")
+                                .accessibilityAddTraits(draft.icon == icon ? .isSelected : [])
+                            }
+                        }
+                    }
                     HStack {
                         TextField("颜色 #RRGGBB", text: Binding(
                             get: { draft.color ?? "" },

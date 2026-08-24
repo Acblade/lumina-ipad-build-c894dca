@@ -87,14 +87,24 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(modes, /luminaModeSymbol/);
   assert.doesNotMatch(modes, /WiZ 使用灯泡原生模式/);
   assert.doesNotMatch(settings, /配置桌面场景面板/);
-  assert.match(scenes, /viewfinder/);
-  assert.match(scenes, /leaf\.fill/);
+  assert.match(scenes, /sceneID: scene\.id/);
+  assert.match(scenes, /case "scene_concentrate": return "scope"/);
+  assert.match(scenes, /Text\(scene\.icon/);
 
   assert.doesNotMatch(widget, /Text\("Lumina"\)|家庭 Hub/);
   assert.match(widget, /Button\(intent: TurnOffAllIntent\(\)\)/);
   assert.match(widget, /Label\("关闭", systemImage: "power"\)/);
+  assert.match(widget, /family == \.systemSmall \|\| family == \.systemMedium/);
+  assert.match(widget, /private var powerTile/);
+  assert.match(widget, /SigoWidgetBackground/);
+  assert.match(widget, /SigoWidgetTheme\.gold/);
+  assert.match(widget, /case "scene_concentrate": return "scope"/);
   assert.doesNotMatch(widgetActions, /SetAllPowerIntent|controlMany/);
   assert.match(widgetActions, /power: false/);
+  assert.match(dashboard, /DashboardZoneOrder\.save/);
+  assert.match(dashboard, /DashboardZoneDropDelegate/);
+  assert.match(dashboard, /\.onDrag/);
+  assert.match(dashboard, /\.onDrop/);
 });
 
 test("Darwin URLProtocol tests accept streamed request bodies", async () => {

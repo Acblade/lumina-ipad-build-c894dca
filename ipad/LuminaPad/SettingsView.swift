@@ -29,7 +29,7 @@ struct SettingsView: View {
                 .frame(maxWidth: 1320)
                 .padding(.horizontal, 28)
                 .padding(.top, 24)
-                .padding(.bottom, 30)
+                .padding(.bottom, 128)
                 .frame(maxWidth: .infinity)
             }
             .luminaPageBackground()

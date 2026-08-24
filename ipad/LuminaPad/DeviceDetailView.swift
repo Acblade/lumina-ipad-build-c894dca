@@ -33,7 +33,8 @@ struct DeviceDetailView: View {
                 }
             }
             .padding(.horizontal, 28)
-            .padding(.vertical, 28)
+            .padding(.top, 28)
+            .padding(.bottom, 120)
             .frame(maxWidth: .infinity)
         }
         .luminaPageBackground()

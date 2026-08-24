@@ -33,6 +33,8 @@
 		B00100000000000000000019 /* AppModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001B /* AppModelTests.swift */; };
 		B0010000000000000000001A /* WidgetActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001C /* WidgetActions.swift */; };
 		B0010000000000000000001B /* WidgetActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001C /* WidgetActions.swift */; };
+		B0010000000000000000001C /* SceneMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001D /* SceneMark.swift */; };
+		B0010000000000000000001D /* SceneMark.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0010000000000000000001D /* SceneMark.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,6 +95,7 @@
 		F0010000000000000000001A /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = System/Library/Frameworks/XCTest.framework; sourceTree = SDKROOT; };
 		F0010000000000000000001B /* AppModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppModelTests.swift; sourceTree = "<group>"; };
 		F0010000000000000000001C /* WidgetActions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetActions.swift; sourceTree = "<group>"; };
+		F0010000000000000000001D /* SceneMark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneMark.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -142,6 +145,7 @@
 				F0010000000000000000000C /* APIClient.swift */,
 				F0010000000000000000000D /* SharedStore.swift */,
 				F0010000000000000000001C /* WidgetActions.swift */,
+				F0010000000000000000001D /* SceneMark.swift */,
 			);
 			path = LuminaShared;
 			sourceTree = "<group>";
@@ -253,8 +257,8 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		S00100000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000001, B00100000000000000000002, B00100000000000000000003, B00100000000000000000004, B00100000000000000000005, B00100000000000000000006, B00100000000000000000007, B00100000000000000000008, B00100000000000000000009, B0010000000000000000000A, B0010000000000000000000B, B0010000000000000000000C, B0010000000000000000000D, B0010000000000000000001A, ); runOnlyForDeploymentPostprocessing = 0; };
-		S00100000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000010, B00100000000000000000011, B00100000000000000000012, B00100000000000000000013, B0010000000000000000001B, ); runOnlyForDeploymentPostprocessing = 0; };
+		S00100000000000000000001 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000001, B00100000000000000000002, B00100000000000000000003, B00100000000000000000004, B00100000000000000000005, B00100000000000000000006, B00100000000000000000007, B00100000000000000000008, B00100000000000000000009, B0010000000000000000000A, B0010000000000000000000B, B0010000000000000000000C, B0010000000000000000000D, B0010000000000000000001A, B0010000000000000000001C, ); runOnlyForDeploymentPostprocessing = 0; };
+		S00100000000000000000002 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000010, B00100000000000000000011, B00100000000000000000012, B00100000000000000000013, B0010000000000000000001B, B0010000000000000000001D, ); runOnlyForDeploymentPostprocessing = 0; };
 		S00100000000000000000003 /* Sources */ = {isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (B00100000000000000000015, B00100000000000000000016, B00100000000000000000019, ); runOnlyForDeploymentPostprocessing = 0; };
 /* End PBXSourcesBuildPhase section */
 

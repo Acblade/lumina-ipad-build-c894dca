@@ -1,5 +1,6 @@
 import AppIntents
 import SwiftUI
+import UIKit
 import WidgetKit
 
 struct SceneEntity: AppEntity, Identifiable, Hashable {
@@ -108,12 +109,16 @@ struct LuminaWidgetView: View {
 
     private var limit: Int {
         switch family {
-        case .systemSmall: 2
-        case .systemMedium: 6
+        case .systemSmall: 1
+        case .systemMedium: 5
         case .systemLarge: 6
         case .systemExtraLarge: 6
         default: 6
         }
+    }
+
+    private var embedsPowerTile: Bool {
+        family == .systemSmall || family == .systemMedium
     }
 
     private var showsGlobalControls: Bool {
@@ -130,6 +135,12 @@ struct LuminaWidgetView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 LazyVGrid(columns: columns, spacing: showsGlobalControls ? 9 : 6) {
+                    if embedsPowerTile {
+                        Button(intent: TurnOffAllIntent()) {
+                            powerTile
+                        }
+                        .buttonStyle(.plain)
+                    }
                     ForEach(entry.scenes.prefix(limit)) { scene in
                         Button(intent: RunSceneIntent(sceneID: scene.id)) {
                             sceneTile(scene)
@@ -141,15 +152,41 @@ struct LuminaWidgetView: View {
             }
         }
         .containerBackground(for: .widget) {
-            LinearGradient(
-                colors: [
-                    Color(red: 0.965, green: 0.972, blue: 0.985),
-                    Color(red: 0.925, green: 0.940, blue: 0.965)
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+            SigoWidgetBackground()
         }
+    }
+
+    private var powerTile: some View {
+        ZStack(alignment: .bottomLeading) {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [Color(red: 0.16, green: 0.14, blue: 0.09), Color(red: 0.045, green: 0.043, blue: 0.038)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+
+            VStack(alignment: .leading, spacing: 0) {
+                Image(systemName: "power")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundStyle(SigoWidgetTheme.gold)
+                    .frame(width: 30, height: 30)
+                    .background(SigoWidgetTheme.gold.opacity(0.12), in: Circle())
+                Spacer(minLength: 2)
+                Text("关闭")
+                    .font(.caption2.weight(.bold))
+                    .foregroundStyle(SigoWidgetTheme.ivory)
+            }
+            .padding(8)
+        }
+        .frame(maxWidth: .infinity, minHeight: 54)
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(SigoWidgetTheme.gold.opacity(0.48), lineWidth: 0.9)
+        }
+        .shadow(color: SigoWidgetTheme.gold.opacity(0.12), radius: 6, y: 2)
+        .accessibilityLabel("关闭全部灯光")
     }
 
     private var globalControls: some View {
@@ -157,12 +194,12 @@ struct LuminaWidgetView: View {
             Button(intent: TurnOffAllIntent()) {
                 Label("关闭", systemImage: "power")
                     .font(.caption.weight(.semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(SigoWidgetTheme.ivory)
                     .padding(.horizontal, 12)
                     .frame(height: 34)
                     .background(
                         LinearGradient(
-                            colors: [Color(red: 0.20, green: 0.24, blue: 0.32), Color(red: 0.32, green: 0.37, blue: 0.48)],
+                            colors: [Color(red: 0.12, green: 0.11, blue: 0.08), Color(red: 0.25, green: 0.20, blue: 0.10)],
                             startPoint: .topLeading,
                             endPoint: .bottomTrailing
                         ),
@@ -176,7 +213,7 @@ struct LuminaWidgetView: View {
                     Button(intent: SetAllBrightnessIntent(brightness: value)) {
                         Text("\(value)")
                             .font(.caption2.monospacedDigit().weight(.semibold))
-                            .foregroundStyle(Color(red: 0.12, green: 0.16, blue: 0.24))
+                            .foregroundStyle(SigoWidgetTheme.ivory)
                             .frame(maxWidth: .infinity, minHeight: 28)
                             .contentShape(Capsule())
                     }
@@ -184,8 +221,8 @@ struct LuminaWidgetView: View {
                 }
             }
             .padding(3)
-            .background(.white.opacity(0.64), in: Capsule())
-            .overlay { Capsule().stroke(.white.opacity(0.82), lineWidth: 0.7) }
+            .background(Color.black.opacity(0.34), in: Capsule())
+            .overlay { Capsule().stroke(SigoWidgetTheme.gold.opacity(0.45), lineWidth: 0.7) }
             .accessibilityElement(children: .contain)
             .accessibilityLabel("亮度")
         }
@@ -211,7 +248,7 @@ struct LuminaWidgetView: View {
                 )
 
             VStack(alignment: .leading, spacing: 0) {
-                Image(systemName: widgetSceneSymbol(scene.icon, name: scene.name))
+                WidgetSceneGlyph(scene: scene)
                     .font(.system(size: showsGlobalControls ? 20 : 17, weight: .semibold))
                     .foregroundStyle(foreground)
                     .frame(width: showsGlobalControls ? 34 : 30, height: showsGlobalControls ? 34 : 30)
@@ -235,6 +272,25 @@ struct LuminaWidgetView: View {
     }
 }
 
+private enum SigoWidgetTheme {
+    static let gold = Color(red: 0.88, green: 0.70, blue: 0.32)
+    static let ivory = Color(red: 0.97, green: 0.94, blue: 0.86)
+}
+
+private struct SigoWidgetBackground: View {
+    var body: some View {
+        LinearGradient(
+            colors: [
+                Color(red: 0.84, green: 0.72, blue: 0.47),
+                Color(red: 0.70, green: 0.54, blue: 0.27),
+                Color(red: 0.49, green: 0.36, blue: 0.17)
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+    }
+}
+
 struct LuminaSceneWidget: Widget {
     let kind = "LuminaScenePanel"
 
@@ -253,22 +309,45 @@ struct LuminaWidgetBundle: WidgetBundle {
     var body: some Widget { LuminaSceneWidget() }
 }
 
-private func widgetSceneSymbol(_ icon: String?, name: String = "") -> String {
-    switch icon {
-    case "scene_focus", "scene_concentrate": return "viewfinder"
+private struct WidgetSceneGlyph: View {
+    let scene: SceneEntity
+
+    var body: some View {
+        if AndroidSceneMark.supports(scene.id) {
+            AndroidSceneMark(
+                sceneID: scene.id,
+                color: widgetSceneUsesDarkForeground(scene.color)
+                    ? Color(red: 0.10, green: 0.13, blue: 0.19)
+                    : .white
+            )
+        } else if let symbol = widgetSceneSymbol(sceneID: scene.id, icon: scene.icon, name: scene.name) {
+            Image(systemName: symbol)
+        } else {
+            Text(scene.icon?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty ?? "✨")
+        }
+    }
+}
+
+private func widgetSceneSymbol(sceneID: String, icon: String?, name: String = "") -> String? {
+    switch sceneID {
+    case "scene_focus": return "viewfinder"
+    case "scene_concentrate": return "scope"
     case "scene_sleep": return "moon.stars.fill"
     case "scene_relax": return "leaf.fill"
-    case "scene_cozy": return "flame.fill"
+    case "scene_cozy": return "cup.and.saucer.fill"
     case "scene_true_colors": return "paintpalette.fill"
     case "scene_off", "scene_all_off", "scene_close": return "power"
-    default:
-        if name.contains("专注") || name.contains("集中") { return "viewfinder" }
-        if name.contains("舒适") || name.contains("放松") { return "leaf.fill" }
-        if name.contains("睡") || name.contains("夜") { return "moon.stars.fill" }
-        if name.contains("原色") || name.contains("颜色") { return "paintpalette.fill" }
-        if name.contains("关") { return "power" }
-        return "sparkles"
+    default: break
     }
+    if let icon, !icon.isEmpty, UIImage(systemName: icon) != nil { return icon }
+    if name.contains("专注") { return "viewfinder" }
+    if name.contains("集中") { return "scope" }
+    if name.contains("舒适") { return "cup.and.saucer.fill" }
+    if name.contains("放松") { return "leaf.fill" }
+    if name.contains("睡") || name.contains("夜") { return "moon.stars.fill" }
+    if name.contains("原色") || name.contains("颜色") { return "paintpalette.fill" }
+    if name.contains("关") { return "power" }
+    return nil
 }
 
 private func widgetSceneColor(_ hex: String?) -> Color {
@@ -289,4 +368,8 @@ private func widgetSceneUsesDarkForeground(_ hex: String?) -> Bool {
     let green = Double((number >> 8) & 0xff)
     let blue = Double(number & 0xff)
     return (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255 > 0.68
+}
+
+private extension String {
+    var nilIfEmpty: String? { isEmpty ? nil : self }
 }

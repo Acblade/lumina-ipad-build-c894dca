@@ -26,7 +26,7 @@ struct ModesView: View {
                 .frame(maxWidth: 1320)
                 .padding(.horizontal, 28)
                 .padding(.top, 24)
-                .padding(.bottom, 34)
+                .padding(.bottom, 128)
                 .frame(maxWidth: .infinity)
             }
             .luminaPageBackground()
@@ -261,7 +261,8 @@ private struct ModeApplyView: View {
             }
             .frame(maxWidth: 760)
             .padding(.horizontal, 28)
-            .padding(.vertical, 28)
+            .padding(.top, 28)
+            .padding(.bottom, 120)
             .frame(maxWidth: .infinity)
         }
         .luminaPageBackground()

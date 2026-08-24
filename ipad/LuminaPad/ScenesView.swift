@@ -6,7 +6,9 @@ struct ScenesView: View {
         NavigationStack {
             ScrollView {
                 SceneManagementView()
-                    .padding(28)
+                    .padding(.horizontal, 28)
+                    .padding(.top, 28)
+                    .padding(.bottom, 120)
             }
             .luminaPageBackground()
             .navigationBarHidden(true)
@@ -125,9 +127,9 @@ private struct SettingsSceneTile: View {
                         if isRunning {
                             ProgressView().tint(.white)
                         } else {
-                            Image(systemName: sceneSymbol(scene.icon, name: scene.name))
+                            SceneGlyph(scene: scene)
                                 .font(.system(size: 38, weight: .semibold))
-                                .foregroundStyle(.white.opacity(0.95))
+                                .foregroundStyle(sceneGlyphUsesDarkForeground(scene.id) ? LuminaTheme.midnight.opacity(0.84) : .white.opacity(0.95))
                         }
                     }
 
@@ -147,27 +149,54 @@ private struct SettingsSceneTile: View {
     }
 }
 
-func sceneSymbol(_ icon: String?, name: String = "") -> String {
-    switch icon {
-    case "scene_focus", "scene_concentrate": return "viewfinder"
+private struct SceneGlyph: View {
+    let scene: Scene
+
+    var body: some View {
+        if AndroidSceneMark.supports(scene.id) {
+            AndroidSceneMark(
+                sceneID: scene.id,
+                color: sceneGlyphUsesDarkForeground(scene.id) ? LuminaTheme.midnight.opacity(0.84) : .white.opacity(0.95)
+            )
+        } else if let symbol = sceneSymbol(sceneID: scene.id, icon: scene.icon, name: scene.name) {
+            Image(systemName: symbol)
+        } else {
+            Text(scene.icon?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty ?? "✨")
+        }
+    }
+}
+
+func sceneSymbol(sceneID: String, icon: String?, name: String = "") -> String? {
+    switch sceneID {
+    case "scene_focus": return "viewfinder"
+    case "scene_concentrate": return "scope"
     case "scene_sleep": return "moon.stars.fill"
     case "scene_relax": return "leaf.fill"
-    case "scene_cozy": return "flame.fill"
+    case "scene_cozy": return "cup.and.saucer.fill"
     case "scene_true_colors": return "paintpalette.fill"
     case "scene_off", "scene_all_off", "scene_close": return "power"
-    case let value? where UIImage(systemName: value) != nil: return value
-    default:
-        let normalized = name.lowercased()
-        if normalized.contains("关") || normalized.contains("off") { return "power" }
-        if normalized.contains("睡") || normalized.contains("夜") { return "moon.stars.fill" }
-        if normalized.contains("专注") || normalized.contains("集中") || normalized.contains("focus") { return "viewfinder" }
-        if normalized.contains("放松") || normalized.contains("舒适") { return "leaf.fill" }
-        if normalized.contains("原色") || normalized.contains("颜色") { return "paintpalette.fill" }
-        if normalized.contains("暖") { return "cup.and.saucer.fill" }
-        return "sparkles"
+    default: break
     }
+    if let icon, UIImage(systemName: icon) != nil { return icon }
+    let normalized = name.lowercased()
+    if normalized.contains("关") || normalized.contains("off") { return "power" }
+    if normalized.contains("睡") || normalized.contains("夜") { return "moon.stars.fill" }
+    if normalized.contains("专注") || normalized.contains("focus") { return "viewfinder" }
+    if normalized.contains("集中") { return "scope" }
+    if normalized.contains("放松") { return "leaf.fill" }
+    if normalized.contains("舒适") || normalized.contains("暖") { return "cup.and.saucer.fill" }
+    if normalized.contains("原色") || normalized.contains("颜色") { return "paintpalette.fill" }
+    return nil
+}
+
+private func sceneGlyphUsesDarkForeground(_ sceneID: String) -> Bool {
+    sceneID == "scene_true_colors" || sceneID == "scene_cozy"
 }
 
 func sceneColor(_ hex: String?) -> Color {
     Color(hex: hex ?? "") ?? LuminaTheme.indigo
+}
+
+private extension String {
+    var nilIfEmpty: String? { isEmpty ? nil : self }
 }
