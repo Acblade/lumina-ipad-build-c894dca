@@ -19,6 +19,9 @@ jobs:
       - name: Apply scoped shared-Keychain patch
         run: git -C xtool-src apply "$GITHUB_WORKSPACE/ci/xtool-shared-keychain.patch"
 
+      - name: Install Linux build dependency
+        run: sudo apt-get update && sudo apt-get install -y liblzma-dev
+
       - name: Build release binary
         working-directory: xtool-src
         env:
