@@ -149,13 +149,13 @@ private struct SettingsSceneTile: View {
 
 func sceneSymbol(_ icon: String?, name: String = "") -> String {
     switch icon {
-    case "scene_focus", "scene_concentrate": "viewfinder"
-    case "scene_sleep": "moon.stars.fill"
-    case "scene_relax": "leaf.fill"
-    case "scene_cozy": "flame.fill"
-    case "scene_true_colors": "paintpalette.fill"
-    case "scene_off", "scene_all_off", "scene_close": "power"
-    case let value? where UIImage(systemName: value) != nil: value
+    case "scene_focus", "scene_concentrate": return "viewfinder"
+    case "scene_sleep": return "moon.stars.fill"
+    case "scene_relax": return "leaf.fill"
+    case "scene_cozy": return "flame.fill"
+    case "scene_true_colors": return "paintpalette.fill"
+    case "scene_off", "scene_all_off", "scene_close": return "power"
+    case let value? where UIImage(systemName: value) != nil: return value
     default:
         let normalized = name.lowercased()
         if normalized.contains("关") || normalized.contains("off") { return "power" }

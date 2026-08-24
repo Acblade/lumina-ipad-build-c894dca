@@ -1,6 +1,6 @@
 {
   "generatedAtUtc": "2026-08-24T16:42:32.0022905+00:00",
-  "sourceCommit": "025c8b34dd3b0168e7f80e09f4e0daa5e206600f",
+  "sourceCommit": "0bc8cee5eeda5d2905188d04138433a463f5c80f",
   "scope": "ipad-build-only",
   "excludes": [
     "hub",
@@ -14,8 +14,8 @@
   "files": [
     {
       "path": ".github/workflows/ipad-xcode.yml",
-      "bytes": 1383,
-      "sha256": "e4f6b26aec5ee2f89e31a9de4724705dc4536a9a4632afd911d6378c3f146a82"
+      "bytes": 1721,
+      "sha256": "9fc499ff0c7750dccb8fd3499bc18bedcc2a04496d19878438ee4800403993a2"
     },
     {
       "path": "ipad/LuminaPadTests/APIClientTests.swift",
@@ -189,8 +189,8 @@
     },
     {
       "path": "ipad/LuminaPad/ScenesView.swift",
-      "bytes": 7040,
-      "sha256": "0ffb1d9e1e100cf2a909c90b9f1847d1679749f3761930170da14133e3010d44"
+      "bytes": 7082,
+      "sha256": "cc83408220676b9060df16ee7e4dd7fc02b8821e71f3ed0709339ea898131535"
     },
     {
       "path": "ipad/LuminaPad/SettingsView.swift",
