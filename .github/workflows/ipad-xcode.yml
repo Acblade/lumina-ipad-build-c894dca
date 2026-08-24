@@ -36,17 +36,6 @@ jobs:
       - name: Check out source
         uses: actions/checkout@v4
 
-      - name: Fast simulator compile preflight
-        shell: bash
-        run: >-
-          xcodebuild
-          -project ipad/LuminaPad.xcodeproj
-          -scheme LuminaPad
-          -destination 'generic/platform=iOS Simulator'
-          -derivedDataPath /tmp/LuminaPreflightDerivedData
-          CODE_SIGNING_ALLOWED=NO
-          build
-
       - name: Verify simulator and compile an iPad device artifact
         shell: bash
         env:

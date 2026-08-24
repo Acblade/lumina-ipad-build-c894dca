@@ -86,7 +86,7 @@ private struct ModeTile: View {
             ModeLogo(mode: mode)
             Text(mode.name)
                 .font(.headline)
-                .foregroundStyle(LuminaTheme.midnight)
+                .foregroundStyle(.primary)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)

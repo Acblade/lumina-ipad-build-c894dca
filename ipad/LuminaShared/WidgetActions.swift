@@ -17,9 +17,18 @@ struct RunSceneIntent: LiveActivityIntent {
 
     func perform() async throws -> some IntentResult {
         let connection = try widgetConnection()
-        _ = try await LuminaAPIClient.shared.runScene(connection, sceneID: sceneID)
+        let store = SharedWidgetControlStore()
+        let previous = store.load()
+        store.save(.init(anyOn: true, selectedBrightness: nil))
         WidgetCenter.shared.reloadAllTimelines()
-        return .result()
+        do {
+            _ = try await LuminaAPIClient.shared.runScene(connection, sceneID: sceneID)
+            return .result()
+        } catch {
+            if let previous { store.save(previous) }
+            WidgetCenter.shared.reloadAllTimelines()
+            throw error
+        }
     }
 }
 
@@ -35,20 +44,29 @@ struct ToggleAllPowerIntent: LiveActivityIntent {
                 zone.power && device.zoneState(zone.id).power
             }
         }
+        let store = SharedWidgetControlStore()
+        let previous = store.load() ?? .inferred(from: devices)
+        store.save(.init(anyOn: shouldTurnOn, selectedBrightness: nil))
+        WidgetCenter.shared.reloadAllTimelines()
         // Keep this deliberately sequential. Several bulbs share one local UDP
         // transport and concurrent control-many requests can be dropped by a Hub
         // that is already forwarding a previous packet.
-        for device in devices where device.online {
-            for zone in device.capabilities.zones where zone.power {
-                try await LuminaAPIClient.shared.control(
-                    connection,
-                    deviceID: device.id,
-                    action: .init(zone: zone.id, power: shouldTurnOn)
-                )
+        do {
+            for device in devices where device.online {
+                for zone in device.capabilities.zones where zone.power {
+                    try await LuminaAPIClient.shared.control(
+                        connection,
+                        deviceID: device.id,
+                        action: .init(zone: zone.id, power: shouldTurnOn)
+                    )
+                }
             }
+            return .result()
+        } catch {
+            store.save(previous)
+            WidgetCenter.shared.reloadAllTimelines()
+            throw error
         }
-        WidgetCenter.shared.reloadAllTimelines()
-        return .result()
     }
 }
 
@@ -65,22 +83,32 @@ struct SetAllBrightnessIntent: LiveActivityIntent {
     func perform() async throws -> some IntentResult {
         let connection = try widgetConnection()
         let devices = try await LuminaAPIClient.shared.devices(connection)
-        for device in devices where device.online {
-            for zone in device.capabilities.zones {
-                guard let range = zone.brightness else { continue }
-                try await LuminaAPIClient.shared.control(
-                    connection,
-                    deviceID: device.id,
-                    action: DeviceControlRequest(
-                        zone: zone.id,
-                        power: true,
-                        brightness: min(max(brightness, range.min), range.max)
-                    )
-                )
-            }
-        }
+        let store = SharedWidgetControlStore()
+        let previous = store.load() ?? .inferred(from: devices)
+        let selected = min(max(brightness, 1), 100)
+        store.save(.init(anyOn: true, selectedBrightness: selected))
         WidgetCenter.shared.reloadAllTimelines()
-        return .result()
+        do {
+            for device in devices where device.online {
+                for zone in device.capabilities.zones {
+                    guard let range = zone.brightness else { continue }
+                    try await LuminaAPIClient.shared.control(
+                        connection,
+                        deviceID: device.id,
+                        action: DeviceControlRequest(
+                            zone: zone.id,
+                            power: true,
+                            brightness: min(max(brightness, range.min), range.max)
+                        )
+                    )
+                }
+            }
+            return .result()
+        } catch {
+            store.save(previous)
+            WidgetCenter.shared.reloadAllTimelines()
+            throw error
+        }
     }
 }
 

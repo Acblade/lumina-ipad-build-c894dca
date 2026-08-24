@@ -189,7 +189,9 @@ struct LuminaPillSlider: View {
                             endPoint: .trailing
                         )
                     )
-                    .frame(width: max(height * 0.04, proxy.size.width * fraction))
+                    // A capsule needs at least one full cap at the minimum value.
+                    // A 1–2 px fill degenerates into the vertical line seen on device.
+                    .frame(width: max(min(height, proxy.size.width), proxy.size.width * fraction))
             }
             .contentShape(Capsule())
             .gesture(

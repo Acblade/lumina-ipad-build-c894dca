@@ -56,7 +56,7 @@ test("scene cards resolve their stored color before applying a gradient", async 
 });
 
 test("second-round iPad UI keeps the accepted Android interactions and removes rejected chrome", async () => {
-  const [dashboard, detail, modes, rootView, settings, scenes, widget, widgetActions, appModel, sceneMark] = await Promise.all([
+  const [dashboard, detail, modes, rootView, settings, scenes, widget, widgetActions, appModel, sceneMark, components] = await Promise.all([
     read("ipad/LuminaPad/DashboardView.swift"),
     read("ipad/LuminaPad/DeviceDetailView.swift"),
     read("ipad/LuminaPad/ModesView.swift"),
@@ -66,7 +66,8 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
     read("ipad/LuminaWidget/LuminaWidget.swift"),
     read("ipad/LuminaShared/WidgetActions.swift"),
     read("ipad/LuminaPad/AppModel.swift"),
-    read("ipad/LuminaShared/SceneMark.swift")
+    read("ipad/LuminaShared/SceneMark.swift"),
+    read("ipad/LuminaPad/Components.swift")
   ]);
 
   assert.match(dashboard, /LuminaPageHeader\("灯光"\)/);
@@ -91,6 +92,7 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(modes, /LongPressGesture/);
   assert.match(modes, /ModeApplyView/);
   assert.match(modes, /luminaModeSymbol/);
+  assert.match(modes, /Text\(mode\.name\)[\s\S]*foregroundStyle\(\.primary\)/);
   assert.doesNotMatch(modes, /WiZ 使用灯泡原生模式/);
   assert.doesNotMatch(settings, /配置桌面场景面板/);
   assert.match(scenes, /sceneID: scene\.id/);
@@ -99,7 +101,10 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
 
   assert.doesNotMatch(widget, /Text\("Lumina"\)|家庭 Hub/);
   assert.match(widget, /Button\(intent: ToggleAllPowerIntent\(\)\)/);
-  assert.match(widget, /Label\("开关", systemImage: "power"\)/);
+  assert.match(widget, /WidgetPowerSwitchVisual\(isOn: entry\.controls\.anyOn\)/);
+  assert.match(widget, /selectedBrightness == value/);
+  assert.match(widget, /case \.systemLarge: 8/);
+  assert.match(widget, /case \.systemExtraLarge: 8/);
   assert.match(widget, /family == \.systemSmall \|\| family == \.systemMedium/);
   assert.match(widget, /private var powerTile/);
   assert.match(widget, /SigoWidgetBackground/);
@@ -114,6 +119,8 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(widget, /name: "日光", icon: "sun\.max\.fill", color: "#65AEE8"/);
   assert.match(sceneMark, /case "scene_daylight"/);
   assert.match(appModel, /Task\.sleep\(for: \.seconds\(3\)\)/);
+  assert.match(appModel, /zone\.segmentRgb = nil/);
+  assert.match(components, /max\(min\(height, proxy\.size\.width\), proxy\.size\.width \* fraction\)/);
   assert.match(dashboard, /DashboardZoneOrder\.save/);
   assert.match(dashboard, /DashboardZoneDropDelegate/);
   assert.match(dashboard, /\.onDrag/);

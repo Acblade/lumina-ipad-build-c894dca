@@ -92,6 +92,7 @@ final class AppModel: ObservableObject {
             isOnline = true
             lastUpdated = Date()
             cache.save(devices: devices, scenes: scenes, modes: modes)
+            SharedWidgetControlStore().save(.inferred(from: devices))
             WidgetCenter.shared.reloadAllTimelines()
         } catch {
             isOnline = false
@@ -106,6 +107,12 @@ final class AppModel: ObservableObject {
             isOnline = true
             lastUpdated = Date()
             cache.save(devices: devices, scenes: scenes, modes: modes)
+            let widgetStore = SharedWidgetControlStore()
+            let widgetState = WidgetControlSnapshot.inferred(from: devices)
+            if widgetStore.load() != widgetState {
+                widgetStore.save(widgetState)
+                WidgetCenter.shared.reloadAllTimelines()
+            }
         } catch {
             isOnline = false
             if !silent { present(error) }
@@ -383,17 +390,39 @@ final class AppModel: ObservableObject {
             zone.colorTemperatureKelvin = cct
             zone.rgb = nil
             zone.sceneId = nil
+            zone.whiteChannels = nil
+            zone.segmentRgb = nil
         }
         if let rgb = action.rgb {
             zone.rgb = rgb
             zone.colorTemperatureKelvin = nil
             zone.sceneId = nil
+            zone.whiteChannels = nil
+            zone.segmentRgb = nil
         }
-        if let sceneID = action.sceneId { zone.sceneId = sceneID }
+        if let sceneID = action.sceneId {
+            zone.sceneId = sceneID
+            zone.colorTemperatureKelvin = nil
+            zone.rgb = nil
+            zone.whiteChannels = nil
+            zone.segmentRgb = nil
+        }
         if let speed = action.speed { zone.speed = speed }
         if let ratio = action.ratio { zone.ratio = ratio }
-        if let white = action.whiteChannels { zone.whiteChannels = white }
-        if let segment = action.segmentRgb { zone.segmentRgb = segment }
+        if let white = action.whiteChannels {
+            zone.whiteChannels = white
+            zone.colorTemperatureKelvin = nil
+            zone.rgb = nil
+            zone.sceneId = nil
+            zone.segmentRgb = nil
+        }
+        if let segment = action.segmentRgb {
+            zone.segmentRgb = segment
+            zone.colorTemperatureKelvin = nil
+            zone.rgb = nil
+            zone.sceneId = nil
+            zone.whiteChannels = nil
+        }
         devices[deviceIndex].state.zones[zoneID] = zone
     }
 

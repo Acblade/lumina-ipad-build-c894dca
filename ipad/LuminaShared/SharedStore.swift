@@ -149,6 +149,54 @@ struct SharedCache: CacheStore {
     }
 }
 
+struct WidgetControlSnapshot: Codable, Equatable, Sendable {
+    var anyOn: Bool
+    var selectedBrightness: Int?
+
+    static func inferred(from devices: [Device]) -> WidgetControlSnapshot {
+        let reportedZones = devices.flatMap { device in
+            device.capabilities.zones.compactMap { capability -> ZoneState? in
+                guard device.online else { return nil }
+                return device.state.zones[capability.id]
+            }
+        }
+        let brightnessValues = devices.flatMap { device in
+            device.capabilities.zones.compactMap { capability -> Int? in
+                guard device.online,
+                      capability.brightness != nil,
+                      let state = device.state.zones[capability.id],
+                      state.power else { return nil }
+                return state.brightness
+            }
+        }
+        let uniformBrightness = Set(brightnessValues).count == 1
+            ? brightnessValues.first
+            : nil
+        let selectable = uniformBrightness.flatMap { [1, 25, 50, 75, 100].contains($0) ? $0 : nil }
+        return WidgetControlSnapshot(
+            anyOn: reportedZones.contains(where: \.power),
+            selectedBrightness: selectable
+        )
+    }
+}
+
+struct SharedWidgetControlStore {
+    private static let key = "widget.control-state.v1"
+    private let defaults = LuminaShared.defaults
+    private let encoder = JSONEncoder()
+    private let decoder = JSONDecoder()
+
+    func load() -> WidgetControlSnapshot? {
+        guard let data = defaults.data(forKey: Self.key) else { return nil }
+        return try? decoder.decode(WidgetControlSnapshot.self, from: data)
+    }
+
+    func save(_ value: WidgetControlSnapshot) {
+        guard let data = try? encoder.encode(value) else { return }
+        defaults.set(data, forKey: Self.key)
+    }
+}
+
 private enum SharedSecretStore {
     static func read(_ key: String) -> String {
         switch LuminaShared.secretStorageRoute {

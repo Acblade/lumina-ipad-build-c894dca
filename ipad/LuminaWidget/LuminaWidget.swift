@@ -77,11 +77,16 @@ struct ScenePanelConfiguration: WidgetConfigurationIntent {
 struct LuminaEntry: TimelineEntry {
     let date: Date
     let scenes: [SceneEntity]
+    let controls: WidgetControlSnapshot
 }
 
 struct LuminaProvider: AppIntentTimelineProvider {
     func placeholder(in context: Context) -> LuminaEntry {
-        LuminaEntry(date: .now, scenes: Array(fallbackSceneEntities.prefix(6)))
+        LuminaEntry(
+            date: .now,
+            scenes: Array(fallbackSceneEntities.prefix(8)),
+            controls: .init(anyOn: true, selectedBrightness: 100)
+        )
     }
 
     func snapshot(for configuration: ScenePanelConfiguration, in context: Context) async -> LuminaEntry {
@@ -95,7 +100,9 @@ struct LuminaProvider: AppIntentTimelineProvider {
     private func entry(_ configuration: ScenePanelConfiguration) -> LuminaEntry {
         let available = availableSceneEntities()
         let scenes = configuration.selectedScenes.isEmpty ? Array(available.prefix(8)) : configuration.selectedScenes
-        return LuminaEntry(date: .now, scenes: scenes)
+        let cachedDevices = SharedCache().loadDevices()
+        let controls = SharedWidgetControlStore().load() ?? .inferred(from: cachedDevices)
+        return LuminaEntry(date: .now, scenes: scenes, controls: controls)
     }
 }
 
@@ -104,7 +111,12 @@ struct LuminaWidgetView: View {
     let entry: LuminaEntry
 
     private var columns: [GridItem] {
-        let count = family == .systemSmall ? 2 : (family == .systemMedium ? 3 : 3)
+        let count: Int
+        switch family {
+        case .systemSmall: count = 2
+        case .systemExtraLarge: count = 4
+        default: count = 3
+        }
         return Array(repeating: GridItem(.flexible(), spacing: 8), count: count)
     }
 
@@ -112,8 +124,8 @@ struct LuminaWidgetView: View {
         switch family {
         case .systemSmall: 1
         case .systemMedium: 5
-        case .systemLarge: 6
-        case .systemExtraLarge: 6
+        case .systemLarge: 8
+        case .systemExtraLarge: 8
         default: 6
         }
     }
@@ -193,37 +205,34 @@ struct LuminaWidgetView: View {
     private var globalControls: some View {
         HStack(spacing: 9) {
             Button(intent: ToggleAllPowerIntent()) {
-                Label("开关", systemImage: "power")
-                    .font(.caption.weight(.semibold))
-                    .foregroundStyle(SigoWidgetTheme.ivory)
-                    .padding(.horizontal, 12)
-                    .frame(height: 34)
-                    .background(
-                        LinearGradient(
-                            colors: [Color(red: 0.12, green: 0.11, blue: 0.08), Color(red: 0.25, green: 0.20, blue: 0.10)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        in: Capsule()
-                    )
+                WidgetPowerSwitchVisual(isOn: entry.controls.anyOn)
             }
             .buttonStyle(.plain)
+            .accessibilityLabel("切换全部灯光")
+            .accessibilityValue(entry.controls.anyOn ? "已开启" : "已关闭")
 
             HStack(spacing: 3) {
                 ForEach([1, 25, 50, 75, 100], id: \.self) { value in
+                    let selected = entry.controls.selectedBrightness == value
                     Button(intent: SetAllBrightnessIntent(brightness: value)) {
                         Text("\(value)")
                             .font(.caption2.monospacedDigit().weight(.semibold))
-                            .foregroundStyle(SigoWidgetTheme.ivory)
+                            .foregroundStyle(selected ? SigoWidgetTheme.ivory : SigoWidgetTheme.charcoal)
                             .frame(maxWidth: .infinity, minHeight: 28)
+                            .background(selected ? SigoWidgetTheme.charcoal : .clear, in: Capsule())
+                            .overlay {
+                                if selected {
+                                    Capsule().stroke(SigoWidgetTheme.gold.opacity(0.72), lineWidth: 0.8)
+                                }
+                            }
                             .contentShape(Capsule())
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(3)
-            .background(Color.black.opacity(0.34), in: Capsule())
-            .overlay { Capsule().stroke(SigoWidgetTheme.gold.opacity(0.45), lineWidth: 0.7) }
+            .background(SigoWidgetTheme.ivory.opacity(0.50), in: Capsule())
+            .overlay { Capsule().stroke(SigoWidgetTheme.charcoal.opacity(0.28), lineWidth: 0.7) }
             .accessibilityElement(children: .contain)
             .accessibilityLabel("亮度")
         }
@@ -267,7 +276,10 @@ struct LuminaWidgetView: View {
             }
             .padding(showsGlobalControls ? 10 : 8)
         }
-        .frame(maxWidth: .infinity, minHeight: showsGlobalControls ? 68 : 54)
+        .frame(
+            maxWidth: .infinity,
+            minHeight: showsGlobalControls ? (family == .systemLarge ? 76 : 82) : 54
+        )
         .overlay {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .stroke(.white.opacity(0.34), lineWidth: 0.8)
@@ -279,6 +291,26 @@ struct LuminaWidgetView: View {
 private enum SigoWidgetTheme {
     static let gold = Color(red: 0.88, green: 0.70, blue: 0.32)
     static let ivory = Color(red: 0.97, green: 0.94, blue: 0.86)
+    static let charcoal = Color(red: 0.18, green: 0.17, blue: 0.15)
+}
+
+private struct WidgetPowerSwitchVisual: View {
+    let isOn: Bool
+
+    var body: some View {
+        ZStack(alignment: isOn ? .trailing : .leading) {
+            Capsule()
+                .fill(isOn ? SigoWidgetTheme.charcoal : SigoWidgetTheme.ivory.opacity(0.68))
+                .overlay {
+                    Capsule().stroke(SigoWidgetTheme.charcoal.opacity(0.28), lineWidth: 0.8)
+                }
+            Circle()
+                .fill(isOn ? SigoWidgetTheme.ivory : SigoWidgetTheme.charcoal)
+                .padding(3)
+                .shadow(color: .black.opacity(0.14), radius: 2, y: 1)
+        }
+        .frame(width: 54, height: 34)
+    }
 }
 
 private struct SigoWidgetBackground: View {
@@ -295,7 +327,7 @@ struct LuminaSceneWidget: Widget {
             LuminaWidgetView(entry: entry)
         }
         .configurationDisplayName("Lumina 场景面板")
-        .description("不打开 App，直接运行场景、关闭灯光和调整总亮度。")
+        .description("不打开 App，直接运行场景、切换灯光和调整总亮度。")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge, .systemExtraLarge])
     }
 }
