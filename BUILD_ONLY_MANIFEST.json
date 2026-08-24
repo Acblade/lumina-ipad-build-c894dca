@@ -1,6 +1,6 @@
 {
   "generatedAtUtc": "2026-08-24T16:42:32.0022905+00:00",
-  "sourceCommit": "c894dca9d33f8aa0461a0e10f7af8f2a25bd498b",
+  "sourceCommit": "cc505f4c3b666ec5a90aac5a620747459400ac2e",
   "scope": "ipad-build-only",
   "excludes": [
     "hub",
@@ -65,7 +65,7 @@
     {
       "path": "ipad/LuminaWidget/LuminaWidget.swift",
       "bytes": 11640,
-      "sha256": "4fd9594109f9513779ea3f2d5da880c5d4a696b3ddbe7cdf7061f0dd0b6d64bb"
+      "sha256": "2be1598c7f204fc9b9b3625e2fb53f7df8f265d386284d1fbda624b509541646"
     },
     {
       "path": "ipad/scripts/export-build-only.ps1",
