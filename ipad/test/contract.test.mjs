@@ -103,6 +103,7 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(widget, /family == \.systemSmall \|\| family == \.systemMedium/);
   assert.match(widget, /private var powerTile/);
   assert.match(widget, /SigoWidgetBackground/);
+  assert.match(widget, /Color\(red: 214\.0 \/ 255\.0, green: 188\.0 \/ 255\.0, blue: 120\.0 \/ 255\.0\)/);
   assert.match(widget, /SigoWidgetTheme\.gold/);
   assert.match(widget, /case "scene_concentrate": return "scope"/);
   assert.doesNotMatch(widgetActions, /SetAllPowerIntent|controlMany/);

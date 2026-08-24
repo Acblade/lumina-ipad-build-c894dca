@@ -283,7 +283,7 @@ private enum SigoWidgetTheme {
 
 private struct SigoWidgetBackground: View {
     var body: some View {
-        Color(red: 0.70, green: 0.57, blue: 0.34)
+        Color(red: 214.0 / 255.0, green: 188.0 / 255.0, blue: 120.0 / 255.0)
     }
 }
 
