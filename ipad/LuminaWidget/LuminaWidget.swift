@@ -32,9 +32,10 @@ struct SceneEntity: AppEntity, Identifiable, Hashable {
 }
 
 private let fallbackSceneEntities: [SceneEntity] = [
-    .init(id: "scene_all_off", name: "全部关闭", icon: "scene_all_off", color: "#586174"),
     .init(id: "scene_focus", name: "专注", icon: "scene_focus", color: "#465B93"),
     .init(id: "scene_concentrate", name: "集中", icon: "scene_concentrate", color: "#4B6A9B"),
+    .init(id: "scene_true_colors", name: "原色", icon: "scene_true_colors", color: "#E9C46A"),
+    .init(id: "scene_daylight", name: "日光", icon: "sun.max.fill", color: "#65AEE8"),
     .init(id: "scene_cozy", name: "舒适", icon: "scene_cozy", color: "#F2B84B"),
     .init(id: "scene_relax", name: "放松", icon: "scene_relax", color: "#7C68A4"),
     .init(id: "scene_sleep", name: "睡觉", icon: "scene_sleep", color: "#514A78"),
@@ -136,7 +137,7 @@ struct LuminaWidgetView: View {
             } else {
                 LazyVGrid(columns: columns, spacing: showsGlobalControls ? 9 : 6) {
                     if embedsPowerTile {
-                        Button(intent: TurnOffAllIntent()) {
+                        Button(intent: ToggleAllPowerIntent()) {
                             powerTile
                         }
                         .buttonStyle(.plain)
@@ -174,7 +175,7 @@ struct LuminaWidgetView: View {
                     .frame(width: 30, height: 30)
                     .background(SigoWidgetTheme.gold.opacity(0.12), in: Circle())
                 Spacer(minLength: 2)
-                Text("关闭")
+                Text("开关")
                     .font(.caption2.weight(.bold))
                     .foregroundStyle(SigoWidgetTheme.ivory)
             }
@@ -186,13 +187,13 @@ struct LuminaWidgetView: View {
                 .stroke(SigoWidgetTheme.gold.opacity(0.48), lineWidth: 0.9)
         }
         .shadow(color: SigoWidgetTheme.gold.opacity(0.12), radius: 6, y: 2)
-        .accessibilityLabel("关闭全部灯光")
+        .accessibilityLabel("切换全部灯光")
     }
 
     private var globalControls: some View {
         HStack(spacing: 9) {
-            Button(intent: TurnOffAllIntent()) {
-                Label("关闭", systemImage: "power")
+            Button(intent: ToggleAllPowerIntent()) {
+                Label("开关", systemImage: "power")
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(SigoWidgetTheme.ivory)
                     .padding(.horizontal, 12)
@@ -248,11 +249,14 @@ struct LuminaWidgetView: View {
                 )
 
             VStack(alignment: .leading, spacing: 0) {
-                WidgetSceneGlyph(scene: scene)
-                    .font(.system(size: showsGlobalControls ? 20 : 17, weight: .semibold))
-                    .foregroundStyle(foreground)
-                    .frame(width: showsGlobalControls ? 34 : 30, height: showsGlobalControls ? 34 : 30)
-                    .background(.white.opacity(darkForeground ? 0.28 : 0.18), in: Circle())
+                ZStack {
+                    Circle().fill(.white.opacity(darkForeground ? 0.28 : 0.18))
+                    WidgetSceneGlyph(scene: scene)
+                        .font(.system(size: showsGlobalControls ? 17 : 15, weight: .semibold))
+                        .foregroundStyle(foreground)
+                        .frame(width: showsGlobalControls ? 20 : 17, height: showsGlobalControls ? 20 : 17)
+                }
+                .frame(width: showsGlobalControls ? 34 : 30, height: showsGlobalControls ? 34 : 30)
 
                 Spacer(minLength: 2)
 
@@ -279,15 +283,7 @@ private enum SigoWidgetTheme {
 
 private struct SigoWidgetBackground: View {
     var body: some View {
-        LinearGradient(
-            colors: [
-                Color(red: 0.84, green: 0.72, blue: 0.47),
-                Color(red: 0.70, green: 0.54, blue: 0.27),
-                Color(red: 0.49, green: 0.36, blue: 0.17)
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
+        Color(red: 0.70, green: 0.57, blue: 0.34)
     }
 }
 
@@ -336,6 +332,7 @@ private func widgetSceneSymbol(sceneID: String, icon: String?, name: String = ""
     case "scene_relax": return "leaf.fill"
     case "scene_cozy": return "cup.and.saucer.fill"
     case "scene_true_colors": return "paintpalette.fill"
+    case "scene_daylight": return "sun.max.fill"
     case "scene_off", "scene_all_off", "scene_close": return "power"
     default: break
     }

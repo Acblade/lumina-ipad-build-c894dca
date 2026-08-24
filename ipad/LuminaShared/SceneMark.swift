@@ -9,7 +9,7 @@ struct AndroidSceneMark: View {
         [
             "scene_all_off", "scene_close", "scene_off", "scene_focus",
             "scene_concentrate", "scene_true_colors", "scene_cozy",
-            "scene_relax", "scene_sleep"
+            "scene_relax", "scene_sleep", "scene_daylight"
         ].contains(sceneID)
     }
 
@@ -55,6 +55,19 @@ struct AndroidSceneMark: View {
                 rays.move(to: point(2, 12)); rays.addLine(to: point(4, 12))
                 rays.move(to: point(20, 12)); rays.addLine(to: point(22, 12))
                 stroke(rays, width: 1.5)
+
+            case "scene_daylight":
+                context.fill(Path(ellipseIn: ellipse(7.5, 7.5, 9, 9)), with: .color(color))
+                var rays = Path()
+                rays.move(to: point(12, 2)); rays.addLine(to: point(12, 5))
+                rays.move(to: point(12, 19)); rays.addLine(to: point(12, 22))
+                rays.move(to: point(2, 12)); rays.addLine(to: point(5, 12))
+                rays.move(to: point(19, 12)); rays.addLine(to: point(22, 12))
+                rays.move(to: point(4.9, 4.9)); rays.addLine(to: point(7, 7))
+                rays.move(to: point(17, 17)); rays.addLine(to: point(19.1, 19.1))
+                rays.move(to: point(19.1, 4.9)); rays.addLine(to: point(17, 7))
+                rays.move(to: point(7, 17)); rays.addLine(to: point(4.9, 19.1))
+                stroke(rays, width: 1.7)
 
             case "scene_cozy":
                 var steam = Path()

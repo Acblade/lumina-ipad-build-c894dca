@@ -56,7 +56,7 @@ test("scene cards resolve their stored color before applying a gradient", async 
 });
 
 test("second-round iPad UI keeps the accepted Android interactions and removes rejected chrome", async () => {
-  const [dashboard, detail, modes, rootView, settings, scenes, widget, widgetActions, appModel] = await Promise.all([
+  const [dashboard, detail, modes, rootView, settings, scenes, widget, widgetActions, appModel, sceneMark] = await Promise.all([
     read("ipad/LuminaPad/DashboardView.swift"),
     read("ipad/LuminaPad/DeviceDetailView.swift"),
     read("ipad/LuminaPad/ModesView.swift"),
@@ -65,7 +65,8 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
     read("ipad/LuminaPad/ScenesView.swift"),
     read("ipad/LuminaWidget/LuminaWidget.swift"),
     read("ipad/LuminaShared/WidgetActions.swift"),
-    read("ipad/LuminaPad/AppModel.swift")
+    read("ipad/LuminaPad/AppModel.swift"),
+    read("ipad/LuminaShared/SceneMark.swift")
   ]);
 
   assert.match(dashboard, /LuminaPageHeader\("灯光"\)/);
@@ -92,15 +93,21 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(scenes, /Text\(scene\.icon/);
 
   assert.doesNotMatch(widget, /Text\("Lumina"\)|家庭 Hub/);
-  assert.match(widget, /Button\(intent: TurnOffAllIntent\(\)\)/);
-  assert.match(widget, /Label\("关闭", systemImage: "power"\)/);
+  assert.match(widget, /Button\(intent: ToggleAllPowerIntent\(\)\)/);
+  assert.match(widget, /Label\("开关", systemImage: "power"\)/);
   assert.match(widget, /family == \.systemSmall \|\| family == \.systemMedium/);
   assert.match(widget, /private var powerTile/);
   assert.match(widget, /SigoWidgetBackground/);
   assert.match(widget, /SigoWidgetTheme\.gold/);
   assert.match(widget, /case "scene_concentrate": return "scope"/);
   assert.doesNotMatch(widgetActions, /SetAllPowerIntent|controlMany/);
-  assert.match(widgetActions, /power: false/);
+  assert.match(widgetActions, /let shouldTurnOn = !devices\.contains/);
+  assert.match(widgetActions, /power: shouldTurnOn/);
+  assert.match(widget, /scene_true_colors/);
+  assert.match(widget, /scene_daylight/);
+  assert.match(widget, /name: "日光", icon: "sun\.max\.fill", color: "#65AEE8"/);
+  assert.match(sceneMark, /case "scene_daylight"/);
+  assert.match(appModel, /Task\.sleep\(for: \.seconds\(3\)\)/);
   assert.match(dashboard, /DashboardZoneOrder\.save/);
   assert.match(dashboard, /DashboardZoneDropDelegate/);
   assert.match(dashboard, /\.onDrag/);

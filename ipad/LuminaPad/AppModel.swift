@@ -53,9 +53,16 @@ final class AppModel: ObservableObject {
         refreshTask = Task { [weak self] in
             guard let self else { return }
             await refreshAll(silent: true)
+            var deviceRefreshCount = 0
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(15))
-                if !Task.isCancelled { await refreshAll(silent: true) }
+                try? await Task.sleep(for: .seconds(3))
+                guard !Task.isCancelled else { break }
+                deviceRefreshCount += 1
+                if deviceRefreshCount.isMultiple(of: 5) {
+                    await refreshAll(silent: true)
+                } else {
+                    await refreshDevices(silent: true)
+                }
             }
         }
     }

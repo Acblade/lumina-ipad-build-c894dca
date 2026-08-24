@@ -273,7 +273,18 @@ func luminaAccent(for state: ZoneState) -> Color {
         return Color(red: 1 - 0.30 * normalized, green: 0.58 + 0.30 * normalized, blue: 0.24 + 0.76 * normalized)
     }
     if let sceneID = state.sceneId {
-        let palettes: [Int: String] = [1: "#F1A662", 2: "#F6C466", 3: "#8DB9E8", 4: "#7DA5DF", 6: "#F2B84B", 7: "#6F76B8", 12: "#79B7D4", 14: "#C47DE8"]
+        let palettes: [Int: String] = [
+            1: "#168FC8", 2: "#E46B9A", 3: "#F47A4C", 4: "#E34B72",
+            5: "#F26732", 6: "#EAA64C", 7: "#3D9B62", 8: "#D58CB9",
+            9: "#6B9FDE", 10: "#D96B59", 11: "#F1B866", 12: "#65B6D6",
+            13: "#8DBCE8", 14: "#D05B35", 15: "#5A8FD4", 16: "#A574C8",
+            17: "#E39A42", 18: "#68A9D8", 19: "#C263D8", 20: "#77B96A",
+            21: "#44B7D8", 22: "#C77838", 23: "#167D9E", 24: "#3AA357",
+            25: "#67C38F", 26: "#C743B7", 27: "#C1494C", 28: "#CE6D31",
+            29: "#E58B32", 30: "#D6AF40", 31: "#C9B96A", 32: "#A76B38",
+            33: "#C85A76", 34: "#E69A4A", 35: "#D43F43", 36: "#9DBDE2",
+            40: "#D37B46"
+        ]
         if let hex = palettes[sceneID], let color = Color(hex: hex) { return color }
     }
     return LuminaTheme.warmGold

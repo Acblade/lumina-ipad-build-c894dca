@@ -23,13 +23,18 @@ struct RunSceneIntent: LiveActivityIntent {
     }
 }
 
-struct TurnOffAllIntent: LiveActivityIntent {
-    static var title: LocalizedStringResource = "关闭全部灯光"
+struct ToggleAllPowerIntent: LiveActivityIntent {
+    static var title: LocalizedStringResource = "切换全部灯光"
     static var openAppWhenRun = false
 
     func perform() async throws -> some IntentResult {
         let connection = try widgetConnection()
         let devices = try await LuminaAPIClient.shared.devices(connection)
+        let shouldTurnOn = !devices.contains { device in
+            device.online && device.capabilities.zones.contains { zone in
+                zone.power && device.zoneState(zone.id).power
+            }
+        }
         // Keep this deliberately sequential. Several bulbs share one local UDP
         // transport and concurrent control-many requests can be dropped by a Hub
         // that is already forwarding a previous packet.
@@ -38,7 +43,7 @@ struct TurnOffAllIntent: LiveActivityIntent {
                 try await LuminaAPIClient.shared.control(
                     connection,
                     deviceID: device.id,
-                    action: .init(zone: zone.id, power: false)
+                    action: .init(zone: zone.id, power: shouldTurnOn)
                 )
             }
         }

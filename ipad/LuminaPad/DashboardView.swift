@@ -249,12 +249,18 @@ private struct DashboardZoneCard: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
-                    .fill(LuminaTheme.surface)
+                    .fill(
+                        LinearGradient(
+                            colors: [accent.opacity(0.11), accent.opacity(0.19)],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
 
                 RoundedRectangle(cornerRadius: 28, style: .continuous)
                     .fill(
                         LinearGradient(
-                            colors: [accent.opacity(0.52), accent.opacity(0.90)],
+                            colors: [accent.opacity(0.72), accent],
                             startPoint: .leading,
                             endPoint: .trailing
                         )
