@@ -20,7 +20,9 @@ jobs:
         run: git -C xtool-src apply "$GITHUB_WORKSPACE/ci/xtool-shared-keychain.patch"
 
       - name: Install Linux build dependency
-        run: sudo apt-get update && sudo apt-get install -y liblzma-dev
+        run: >-
+          sudo apt-get update && sudo apt-get install -y
+          libimobiledevice-dev liblzma-dev libplist-dev libusbmuxd-dev
 
       - name: Build release binary
         working-directory: xtool-src
