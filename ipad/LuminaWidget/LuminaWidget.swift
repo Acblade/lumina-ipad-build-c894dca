@@ -90,18 +90,29 @@ struct LuminaProvider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: ScenePanelConfiguration, in context: Context) async -> LuminaEntry {
-        entry(configuration)
+        await entry(configuration)
     }
 
     func timeline(for configuration: ScenePanelConfiguration, in context: Context) async -> Timeline<LuminaEntry> {
-        Timeline(entries: [entry(configuration)], policy: .after(Date().addingTimeInterval(15 * 60)))
+        Timeline(entries: [await entry(configuration)], policy: .after(Date().addingTimeInterval(5 * 60)))
     }
 
-    private func entry(_ configuration: ScenePanelConfiguration) -> LuminaEntry {
+    private func entry(_ configuration: ScenePanelConfiguration) async -> LuminaEntry {
         let available = availableSceneEntities()
         let scenes = configuration.selectedScenes.isEmpty ? Array(available.prefix(8)) : configuration.selectedScenes
         let cachedDevices = SharedCache().loadDevices()
-        let controls = SharedWidgetControlStore().load() ?? .inferred(from: cachedDevices)
+        let storedControls = SharedWidgetControlStore().load()
+        let controls: WidgetControlSnapshot
+        if let connection = try? widgetConnection(),
+           let devices = try? await LuminaAPIClient.shared.devices(connection) {
+            let live = WidgetControlSnapshot.inferred(from: devices)
+            controls = .init(
+                anyOn: live.anyOn,
+                selectedBrightness: live.selectedBrightness ?? storedControls?.selectedBrightness
+            )
+        } else {
+            controls = storedControls ?? .inferred(from: cachedDevices)
+        }
         return LuminaEntry(date: .now, scenes: scenes, controls: controls)
     }
 }

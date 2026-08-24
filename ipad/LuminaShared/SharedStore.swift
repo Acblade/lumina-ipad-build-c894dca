@@ -194,6 +194,10 @@ struct SharedWidgetControlStore {
     func save(_ value: WidgetControlSnapshot) {
         guard let data = try? encoder.encode(value) else { return }
         defaults.set(data, forKey: Self.key)
+        // Widget actions and timeline generation may run in different processes.
+        // Force the tiny control snapshot to disk before asking WidgetKit to
+        // rebuild the timeline, otherwise a reload can observe the old value.
+        defaults.synchronize()
     }
 }
 

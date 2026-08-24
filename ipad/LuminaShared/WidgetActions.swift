@@ -23,6 +23,10 @@ struct RunSceneIntent: LiveActivityIntent {
         WidgetCenter.shared.reloadAllTimelines()
         do {
             _ = try await LuminaAPIClient.shared.runScene(connection, sceneID: sceneID)
+            let devices = try? await LuminaAPIClient.shared.devices(connection)
+            store.save(devices.map(WidgetControlSnapshot.inferred(from:))
+                ?? .init(anyOn: true, selectedBrightness: nil))
+            WidgetCenter.shared.reloadAllTimelines()
             return .result()
         } catch {
             if let previous { store.save(previous) }
@@ -61,6 +65,13 @@ struct ToggleAllPowerIntent: LiveActivityIntent {
                     )
                 }
             }
+            let refreshed = (try? await LuminaAPIClient.shared.devices(connection)) ?? devices
+            let inferred = WidgetControlSnapshot.inferred(from: refreshed)
+            store.save(.init(
+                anyOn: shouldTurnOn,
+                selectedBrightness: shouldTurnOn ? inferred.selectedBrightness : previous.selectedBrightness
+            ))
+            WidgetCenter.shared.reloadAllTimelines()
             return .result()
         } catch {
             store.save(previous)
@@ -103,6 +114,11 @@ struct SetAllBrightnessIntent: LiveActivityIntent {
                     )
                 }
             }
+            // Preserve the exact preset the user chose. Some lamps clamp 1% to
+            // their own minimum and their immediate read-back therefore cannot
+            // be used to identify the selected widget button reliably.
+            store.save(.init(anyOn: true, selectedBrightness: selected))
+            WidgetCenter.shared.reloadAllTimelines()
             return .result()
         } catch {
             store.save(previous)
@@ -117,7 +133,7 @@ enum WidgetActionError: LocalizedError {
     var errorDescription: String? { "请先打开 Lumina 并连接 Hub" }
 }
 
-private func widgetConnection() throws -> HubConnection {
+func widgetConnection() throws -> HubConnection {
     let connection = SharedSettings().loadConnection()
     guard connection.isConfigured, !connection.bearerToken.isEmpty else {
         throw WidgetActionError.notConfigured
