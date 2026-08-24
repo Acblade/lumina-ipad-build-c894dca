@@ -81,6 +81,11 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(detail, /LuminaColorField/);
   assert.match(detail, /frame\(height: 260\)/);
   assert.match(detail, /mappedKelvin/);
+  assert.match(detail, /mapsTemperatureToRGB/);
+  assert.match(detail, /capability\.rgb \|\| capability\.colorTemperature != nil[\s\S]*colorSection[\s\S]*capability\.segmentRgb[\s\S]*segmentSection/);
+  assert.match(detail, /ControlLabel\("左右分区"/);
+  assert.match(detail, /segmentRgb: \.init\(left: leftRGB, right: rightRGB\)/);
+  assert.match(detail, /SegmentHexApplyField/);
   assert.doesNotMatch(detail, /运行时能力|设备原生效果|冷暖白通道|Text\("Home"\)/);
 
   assert.match(modes, /LongPressGesture/);
