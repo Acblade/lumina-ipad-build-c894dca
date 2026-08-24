@@ -1,6 +1,6 @@
 {
   "generatedAtUtc": "2026-08-24T16:42:32.0022905+00:00",
-  "sourceCommit": "cc505f4c3b666ec5a90aac5a620747459400ac2e",
+  "sourceCommit": "025c8b34dd3b0168e7f80e09f4e0daa5e206600f",
   "scope": "ipad-build-only",
   "excludes": [
     "hub",
@@ -50,7 +50,7 @@
     {
       "path": "ipad/LuminaShared/WidgetActions.swift",
       "bytes": 3534,
-      "sha256": "6672661298bb9ca4a545d2c070229f09be8503ef9f1213f3b85f445cdd9be08d"
+      "sha256": "a1f488aa3751e0826e8c4ebede519e2725826593e9187523f5476a817ecd595c"
     },
     {
       "path": "ipad/LuminaWidget/Info.plist",

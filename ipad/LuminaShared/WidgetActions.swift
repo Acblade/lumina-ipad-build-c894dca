@@ -71,6 +71,7 @@ struct SetAllBrightnessIntent: LiveActivityIntent {
                         power: true,
                         brightness: min(max(brightness, range.min), range.max)
                     )
+                )
             }
         }
         WidgetCenter.shared.reloadAllTimelines()
