@@ -19,25 +19,21 @@ jobs:
       - name: Apply scoped shared-Keychain patch
         run: git -C xtool-src apply "$GITHUB_WORKSPACE/ci/xtool-shared-keychain.patch"
 
-      - name: Install Linux build dependency
-        run: >-
-          sudo apt-get update && sudo apt-get install -y
-          libimobiledevice-dev liblzma-dev libplist-dev libusbmuxd-dev
-
-      - name: Build release binary
+      - name: Build release AppImage with upstream Docker recipe
         working-directory: xtool-src
-        env:
-          XTOOL_VERSION: 1.17.0-lumina-shared-keychain
-        run: swift build -c release --product xtool
+        run: >-
+          docker compose run --build
+          -e XTOOL_VERSION=1.17.0-lumina-shared-keychain
+          --rm xtool Linux/build.sh
 
       - name: Record binary hash
-        run: sha256sum xtool-src/.build/release/xtool | tee xtool-sha256.txt
+        run: sha256sum xtool-src/Linux/packages/xtool-x86_64.AppImage | tee xtool-sha256.txt
 
       - uses: actions/upload-artifact@v4
         with:
           name: lumina-xtool-shared-keychain
           path: |
-            xtool-src/.build/release/xtool
+            xtool-src/Linux/packages/xtool-x86_64.AppImage
             xtool-sha256.txt
           if-no-files-found: error
           retention-days: 1
