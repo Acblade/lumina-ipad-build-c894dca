@@ -90,29 +90,22 @@ struct LuminaProvider: AppIntentTimelineProvider {
     }
 
     func snapshot(for configuration: ScenePanelConfiguration, in context: Context) async -> LuminaEntry {
-        await entry(configuration)
+        entry(configuration)
     }
 
     func timeline(for configuration: ScenePanelConfiguration, in context: Context) async -> Timeline<LuminaEntry> {
-        Timeline(entries: [await entry(configuration)], policy: .after(Date().addingTimeInterval(5 * 60)))
+        Timeline(entries: [entry(configuration)], policy: .after(Date().addingTimeInterval(5 * 60)))
     }
 
-    private func entry(_ configuration: ScenePanelConfiguration) async -> LuminaEntry {
+    private func entry(_ configuration: ScenePanelConfiguration) -> LuminaEntry {
         let available = availableSceneEntities()
         let scenes = configuration.selectedScenes.isEmpty ? Array(available.prefix(8)) : configuration.selectedScenes
         let cachedDevices = SharedCache().loadDevices()
-        let storedControls = SharedWidgetControlStore().load()
-        let controls: WidgetControlSnapshot
-        if let connection = try? widgetConnection(),
-           let devices = try? await LuminaAPIClient.shared.devices(connection) {
-            let live = WidgetControlSnapshot.inferred(from: devices)
-            controls = .init(
-                anyOn: live.anyOn,
-                selectedBrightness: live.selectedBrightness ?? storedControls?.selectedBrightness
-            )
-        } else {
-            controls = storedControls ?? .inferred(from: cachedDevices)
-        }
+        // The control Intent commits the exact optimistic/confirmed state into a
+        // shared Keychain group. Do not replace it with an immediate Hub read-back:
+        // several lamps report their previous value briefly, and free-provisioned
+        // widgets do not have the app-private connection credentials.
+        let controls = SharedWidgetControlStore().load() ?? .inferred(from: cachedDevices)
         return LuminaEntry(date: .now, scenes: scenes, controls: controls)
     }
 }

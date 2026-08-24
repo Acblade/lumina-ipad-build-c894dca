@@ -44,6 +44,30 @@ enum LuminaShared {
         return candidates
     }
 
+    /// Xtool prefixes free-provisioned bundle identifiers with `XTL-<TeamID>.`.
+    /// The signing prefix itself does not include `XTL-`, so derive the Keychain
+    /// access group that both the app and its widget extension can open.
+    static func keychainGroupCandidates(
+        for bundleIdentifier: String?,
+        configuredGroup: String?
+    ) -> [String] {
+        var candidates: [String] = []
+        if let bundleIdentifier,
+           bundleIdentifier.hasPrefix("XTL-"),
+           let separator = bundleIdentifier.firstIndex(of: ".") {
+            let encodedTeam = bundleIdentifier[bundleIdentifier.index(bundleIdentifier.startIndex, offsetBy: 4)..<separator]
+            if !encodedTeam.isEmpty {
+                candidates.append("\(encodedTeam).\(canonicalBundleRoot).shared")
+            }
+        }
+        if let configuredGroup = configuredGroup?.trimmingCharacters(in: .whitespacesAndNewlines),
+           !configuredGroup.isEmpty,
+           !candidates.contains(configuredGroup) {
+            candidates.append(configuredGroup)
+        }
+        return candidates
+    }
+
     private static var sharedContainer: (identifier: String, url: URL)? {
         for identifier in appGroupCandidates(for: Bundle.main.bundleIdentifier) {
             if let url = FileManager.default.containerURL(
@@ -87,6 +111,12 @@ enum LuminaShared {
 
     static var keychainGroup: String? {
         Bundle.main.object(forInfoDictionaryKey: "LuminaKeychainAccessGroup") as? String
+    }
+    static var keychainGroupCandidates: [String] {
+        keychainGroupCandidates(
+            for: Bundle.main.bundleIdentifier,
+            configuredGroup: keychainGroup
+        )
     }
 }
 
@@ -187,12 +217,24 @@ struct SharedWidgetControlStore {
     private let decoder = JSONDecoder()
 
     func load() -> WidgetControlSnapshot? {
+        for accessGroup in LuminaShared.keychainGroupCandidates {
+            let encoded = Keychain.read(Self.key, accessGroup: accessGroup)
+            guard let data = Data(base64Encoded: encoded),
+                  let value = try? decoder.decode(WidgetControlSnapshot.self, from: data) else {
+                continue
+            }
+            return value
+        }
         guard let data = defaults.data(forKey: Self.key) else { return nil }
         return try? decoder.decode(WidgetControlSnapshot.self, from: data)
     }
 
     func save(_ value: WidgetControlSnapshot) {
         guard let data = try? encoder.encode(value) else { return }
+        let encoded = data.base64EncodedString()
+        for accessGroup in LuminaShared.keychainGroupCandidates {
+            try? Keychain.write(encoded, key: Self.key, accessGroup: accessGroup)
+        }
         defaults.set(data, forKey: Self.key)
         // Widget actions and timeline generation may run in different processes.
         // Force the tiny control snapshot to disk before asking WidgetKit to

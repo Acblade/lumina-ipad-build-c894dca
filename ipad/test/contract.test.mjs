@@ -305,6 +305,9 @@ test("free signing falls back safely when App Group containers are unavailable",
   assert.match(store, /case appPrivateKeychain/);
   assert.match(store, /hasSharedContainer \? \.sharedProtectedFile : \.appPrivateKeychain/);
   assert.match(store, /Keychain\.write\(value, key: key, accessGroup: nil\)/);
+  assert.match(store, /encodedTeam.*canonicalBundleRoot.*shared/s);
+  assert.match(store, /Data\(base64Encoded: encoded\)/);
+  assert.match(store, /Keychain\.write\(encoded, key: Self\.key, accessGroup: accessGroup\)/);
   assert.match(store, /return \.standard/);
   assert.match(store, /completeFileProtectionUntilFirstUserAuthentication/);
   assert.match(store, /isExcludedFromBackup = true/);
@@ -313,6 +316,7 @@ test("free signing falls back safely when App Group containers are unavailable",
   assert.match(actions, /struct RunSceneIntent: LiveActivityIntent/);
   assert.match(actions, /static var openAppWhenRun = false/);
   assert.match(actions, /SharedSettings\(\)\.loadConnection\(\)/);
+  assert.doesNotMatch(widget, /await LuminaAPIClient\.shared\.devices/);
   assert.equal((project.match(/WidgetActions\.swift in Sources/g) ?? []).length, 2);
   assert.match(project, /S00100000000000000000001[^\n]+B0010000000000000000001A/);
   assert.match(project, /S00100000000000000000002[^\n]+B0010000000000000000001B/);

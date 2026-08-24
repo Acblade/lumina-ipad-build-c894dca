@@ -80,6 +80,27 @@ final class ModelsTests: XCTestCase {
         XCTAssertTrue(LuminaShared.isXtoolProvisioned(bundleIdentifier: "XTL-1234ABCD.com.sigo.lumina.ipad"))
         XCTAssertFalse(LuminaShared.isXtoolProvisioned(bundleIdentifier: "com.sigo.lumina.ipad"))
         XCTAssertEqual(
+            LuminaShared.keychainGroupCandidates(
+                for: "XTL-1234ABCD.com.sigo.lumina.ipad",
+                configuredGroup: "com.sigo.lumina.shared"
+            ),
+            ["1234ABCD.com.sigo.lumina.shared", "com.sigo.lumina.shared"]
+        )
+        XCTAssertEqual(
+            LuminaShared.keychainGroupCandidates(
+                for: "XTL-1234ABCD.com.sigo.lumina.ipad.widget",
+                configuredGroup: nil
+            ),
+            ["1234ABCD.com.sigo.lumina.shared"]
+        )
+        XCTAssertEqual(
+            LuminaShared.keychainGroupCandidates(
+                for: "com.sigo.lumina.ipad",
+                configuredGroup: "TEAMID.com.sigo.lumina.shared"
+            ),
+            ["TEAMID.com.sigo.lumina.shared"]
+        )
+        XCTAssertEqual(
             LuminaShared.secretStorageRoute(usesXtoolProvisioning: true, hasSharedContainer: false),
             .appPrivateKeychain
         )
