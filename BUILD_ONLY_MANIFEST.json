@@ -1,6 +1,6 @@
 {
-  "generatedAtUtc": "2026-08-24T22:30:15.9440986+00:00",
-  "sourceCommit": "34a7c2a74b446ed11bc1357ce5ecebde12cc0e56",
+  "generatedAtUtc": "2026-08-28T21:02:15.3636372+00:00",
+  "sourceCommit": "f7d4b0d26853352bd5c1092fca4b078d51df8d07",
   "scope": "ipad-build-only",
   "excludes": [
     "hub",
@@ -19,23 +19,23 @@
     },
     {
       "path": "ipad/LuminaPadTests/AppModelTests.swift",
-      "bytes": 11453,
-      "sha256": "8b0fd12d31f90298e8344f5b1e54f6429867446daf46baba842299082f5a3665"
+      "bytes": 12607,
+      "sha256": "8b527a508b33b5647febadcb5775488b647433da24644b011ad96c7c37caa25c"
     },
     {
       "path": "ipad/LuminaPadTests/ModelsTests.swift",
-      "bytes": 3787,
-      "sha256": "a473a7fb0c02a0acf180f2d0c79fadf5847e63a00c31b93ee3d6420f80eda47f"
+      "bytes": 5212,
+      "sha256": "6df119c85ad0368bb41209639915552d40f07bfcbc5e4a40422bef5601853855"
     },
     {
       "path": "ipad/LuminaShared/APIClient.swift",
-      "bytes": 10205,
-      "sha256": "74a5140c50bb09f62640710e285be450174b4378cd99a6e56250d2535e0c60cc"
+      "bytes": 23203,
+      "sha256": "90ebbd5c315c5a58287072d11a420ae293f72e323689c088b0c1d073d13fa640"
     },
     {
       "path": "ipad/LuminaShared/Models.swift",
-      "bytes": 29961,
-      "sha256": "ab67db7f3637b9f2919d8d0ce70d03b6bcecd4ed3e4f9ea28a88a814a9618602"
+      "bytes": 31002,
+      "sha256": "d64549481bc37b3e8efbbd767cd637cac239d56aecc8b8d5402a156caf525ed9"
     },
     {
       "path": "ipad/LuminaShared/SceneMark.swift",
@@ -44,13 +44,13 @@
     },
     {
       "path": "ipad/LuminaShared/SharedStore.swift",
-      "bytes": 12649,
-      "sha256": "2f13138990f4c4a18bcb7ef35b910e0f3fbd4badb242315302a92b90bd3ae234"
+      "bytes": 14758,
+      "sha256": "75871fc63850677f0b17af3c7889e4a4fbf8aff3cb1d3402b3c688329d0ec237"
     },
     {
       "path": "ipad/LuminaShared/WidgetActions.swift",
-      "bytes": 6008,
-      "sha256": "9105afae4338d2107261fcb5be4a4fea580ab1c8a1a3b3900b2995d76e24874a"
+      "bytes": 6107,
+      "sha256": "1f73674f550d166e6892b1330d67016252bb51df548636d6be3b508521891755"
     },
     {
       "path": "ipad/LuminaWidget/Info.plist",
@@ -64,8 +64,8 @@
     },
     {
       "path": "ipad/LuminaWidget/LuminaWidget.swift",
-      "bytes": 16532,
-      "sha256": "05c893d4f008bacd73b4ed12c7f483f55e7147c02c3f6aeabf04c48215b45499"
+      "bytes": 16333,
+      "sha256": "acc8aca1fc171e9183737600bcdef2c2ac6cd7d3dc5e25ec2923465d84f51f57"
     },
     {
       "path": "ipad/scripts/export-build-only.ps1",
@@ -99,13 +99,13 @@
     },
     {
       "path": "ipad/test/contract.test.mjs",
-      "bytes": 18335,
-      "sha256": "2f5be80f096ec48de87e01289b5726d749a3224655f48e2d8c6f473f58aaf420"
+      "bytes": 18743,
+      "sha256": "193e41b18b9c17a1e9d6e1c40f51f91610b44eaf853ca640ce3c98ca79d0fcad"
     },
     {
       "path": "ipad/LuminaPadTests/APIClientTests.swift",
-      "bytes": 3755,
-      "sha256": "4e54676c99a66b11b07c7ec1d75d31832d2aad29d851a33a0fc12b81443c42a9"
+      "bytes": 5426,
+      "sha256": "ad769647525022297d988fa184b241b7ae6de39b30b7efe9c88cb1b168c0ff62"
     },
     {
       "path": "ipad/LuminaPad.xcodeproj/xcshareddata/xcschemes/LuminaPad.xcscheme",
@@ -129,13 +129,13 @@
     },
     {
       "path": "ipad/README.md",
-      "bytes": 8818,
-      "sha256": "87c214770cf020766c47d181834e36edfd750ab11a965fc24c186edb5a934dd3"
+      "bytes": 8966,
+      "sha256": "dc7566c6b6941cab65458b8f161a38c1cd8ffac43af98a99a5b5bf7a012a67d7"
     },
     {
       "path": "ipad/LuminaPad/AppModel.swift",
-      "bytes": 17965,
-      "sha256": "4b8f807a506923ee48ae1991eb83e5d66727ac3a00e29be032feb76b5a576a51"
+      "bytes": 22483,
+      "sha256": "47ca0306a6637463026a23389754fd242698a36b006ed746c071171506ebe441"
     },
     {
       "path": "ipad/LuminaPad/Components.swift",
@@ -164,8 +164,8 @@
     },
     {
       "path": "ipad/test/CoreSmoke.swift",
-      "bytes": 6574,
-      "sha256": "ce359b4f74b7944694ed127fc07ba47e71725953e5bd2a085576fa8e047c3c1f"
+      "bytes": 6704,
+      "sha256": "50f2b144dba0731af44eaa149eb3130ac9883ebafc35c424dabb6daae84b2a4f"
     },
     {
       "path": "ipad/LuminaPad/LuminaPadApp.swift",
@@ -179,8 +179,8 @@
     },
     {
       "path": "ipad/LuminaPad/RootView.swift",
-      "bytes": 5946,
-      "sha256": "d855df997176ebd180920a574c3204b02a8cd61446ab7ee875da586226d4eb1c"
+      "bytes": 6087,
+      "sha256": "b5e09b581a0456d07eb1ef317ac320fd7c66ae8894e696ede1ff228efafac3cc"
     },
     {
       "path": "ipad/LuminaPad/SceneEditorView.swift",
@@ -194,8 +194,8 @@
     },
     {
       "path": "ipad/LuminaPad/SettingsView.swift",
-      "bytes": 7116,
-      "sha256": "2d93424941223b2d3ad2b7a1db6d5516967d655ee0c7717eadb7677a79512f2c"
+      "bytes": 7607,
+      "sha256": "b13963b0976553d832ac2948a93beca0aecbaa5cfb0baacf7d7dc56832dfb440"
     },
     {
       "path": "ipad/LuminaPad/Assets.xcassets/Contents.json",

@@ -41,9 +41,7 @@ final class AppModelTests: XCTestCase {
                 let body = try XCTUnwrap(requestBody(request))
                 let object = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
                 XCTAssertEqual(object["power"] as? Bool, true)
-                return (200, #"{"data":{}}"#)
-            case ("GET", "/api/v1/devices"):
-                return (200, devicesEnvelope(power: true))
+                return (200, deviceEnvelope(power: true))
             default:
                 return (404, #"{"error":{"message":"unexpected route"}}"#)
             }
@@ -64,7 +62,8 @@ final class AppModelTests: XCTestCase {
 
         model.preparePairing(from: url)
 
-        XCTAssertEqual(model.pendingPairing?.connection.baseURL, "http://192.0.2.10:17890")
+        XCTAssertEqual(model.pendingPairing?.connection.effectiveLocalBaseURL, "http://192.0.2.10:17890")
+        XCTAssertEqual(model.pendingPairing?.connection.relayBaseURL, "")
         XCTAssertEqual(model.pendingPairing?.connection.bearerToken, "test-secret")
         XCTAssertNil(model.errorMessage)
         XCTAssertFalse(model.isConfigured)
@@ -79,6 +78,30 @@ final class AppModelTests: XCTestCase {
 
         XCTAssertNil(model.errorMessage)
         XCTAssertFalse(model.isConfigured)
+    }
+
+    func testForegroundRefreshNeverPollsRemoteOnlyConnection() async throws {
+        var requestCount = 0
+        AppModelURLProtocol.handler = { _ in
+            requestCount += 1
+            return (500, #"{"error":{"message":"unexpected request"}}"#)
+        }
+        let model = AppModel(
+            api: makeClient(),
+            settings: TestConnectionStore(.init(
+                baseURL: "https://lumina-relay.workers.dev",
+                bearerToken: "test-token",
+                cloudflareClientID: "id",
+                cloudflareClientSecret: "secret"
+            )),
+            cache: TestCacheStore()
+        )
+
+        model.beginForegroundRefresh()
+        try await Task.sleep(for: .milliseconds(100))
+        model.stopForegroundRefresh()
+
+        XCTAssertEqual(requestCount, 0)
     }
 
     func testFailedPairingRemainsAvailableForPermissionRetry() async throws {
@@ -165,6 +188,12 @@ final class AppModelTests: XCTestCase {
 private func devicesEnvelope(power: Bool) -> String {
     """
     {"data":[{"id":"wiz:test","name":"测试灯","vendor":"wiz","online":true,"capabilities":{"zones":[{"id":"main","label":"主灯","power":true,"brightness":{"min":1,"max":100}}]},"state":{"zones":{"main":{"power":\(power),"brightness":50}}}}]}
+    """
+}
+
+private func deviceEnvelope(power: Bool) -> String {
+    """
+    {"data":{"id":"wiz:test","name":"测试灯","vendor":"wiz","online":true,"capabilities":{"zones":[{"id":"main","label":"主灯","power":true,"brightness":{"min":1,"max":100}}]},"state":{"zones":{"main":{"power":\(power),"brightness":50}}}}}
     """
 }
 

@@ -126,7 +126,9 @@ test("second-round iPad UI keeps the accepted Android interactions and removes r
   assert.match(widget, /scene_daylight/);
   assert.match(widget, /name: "日光", icon: "sun\.max\.fill", color: "#65AEE8"/);
   assert.match(sceneMark, /case "scene_daylight"/);
-  assert.match(appModel, /Task\.sleep\(for: \.seconds\(3\)\)/);
+  assert.doesNotMatch(appModel, /Task\.sleep\(for: \.seconds\(3\)\)/);
+  assert.match(appModel, /api\.events\(source\)/);
+  assert.match(appModel, /Remote Relay is never/);
   assert.match(appModel, /zone\.segmentRgb = nil/);
   assert.match(components, /max\(min\(height, proxy\.size\.width\), proxy\.size\.width \* fraction\)/);
   assert.match(dashboard, /DashboardZoneOrder\.save/);

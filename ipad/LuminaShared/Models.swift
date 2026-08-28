@@ -710,19 +710,42 @@ struct RunInfo: Codable, Hashable, Identifiable, Sendable {
 }
 
 struct HubConnection: Codable, Hashable, Sendable {
+    /// Legacy primary endpoint. A workers.dev URL is the encrypted Relay.
+    /// Older saved LAN-only configurations remain valid through
+    /// `effectiveLocalBaseURL`.
     var baseURL = ""
     var bearerToken = ""
     var cloudflareClientID = ""
     var cloudflareClientSecret = ""
+    var localBaseURL = ""
 
-    var isConfigured: Bool { !baseURL.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+    var effectiveLocalBaseURL: String {
+        let explicit = localBaseURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !explicit.isEmpty { return explicit }
+        let legacy = baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        return legacy.isRelayEndpoint ? "" : legacy
+    }
+    var relayBaseURL: String {
+        let value = baseURL.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isRelayEndpoint ? value : ""
+    }
+    var isConfigured: Bool { !effectiveLocalBaseURL.isEmpty || !relayBaseURL.isEmpty }
+    /// workers.dev denotes Lumina's encrypted outbound Relay, never a public Hub.
+    var usesRelay: Bool { !relayBaseURL.isEmpty }
     var normalized: HubConnection {
         HubConnection(
             baseURL: baseURL.trimmingCharacters(in: .whitespacesAndNewlines),
             bearerToken: bearerToken.trimmingCharacters(in: .whitespacesAndNewlines),
             cloudflareClientID: cloudflareClientID.trimmingCharacters(in: .whitespacesAndNewlines),
-            cloudflareClientSecret: cloudflareClientSecret.trimmingCharacters(in: .whitespacesAndNewlines)
+            cloudflareClientSecret: cloudflareClientSecret.trimmingCharacters(in: .whitespacesAndNewlines),
+            localBaseURL: localBaseURL.trimmingCharacters(in: .whitespacesAndNewlines)
         )
+    }
+}
+
+private extension String {
+    var isRelayEndpoint: Bool {
+        range(of: ".workers.dev", options: .caseInsensitive) != nil
     }
 }
 

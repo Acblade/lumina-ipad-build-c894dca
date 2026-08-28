@@ -46,6 +46,7 @@ enum CoreSmoke {
         try require(scene.validationError(devices: [device]) == nil, "valid Hub scene was rejected")
         let normalizedConnection = HubConnection(baseURL: "  http://hub.local:17890/  ", bearerToken: " token\n").normalized
         try require(normalizedConnection.baseURL == "http://hub.local:17890/", "Hub URL whitespace was not normalized")
+        try require(normalizedConnection.effectiveLocalBaseURL == "http://hub.local:17890/", "Legacy LAN URL was not preserved")
         try require(normalizedConnection.bearerToken == "token", "bearer token whitespace was not normalized")
 
         let unsupported = Scene(

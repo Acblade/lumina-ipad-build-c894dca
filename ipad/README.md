@@ -8,6 +8,7 @@ Native iPadOS 17+ client for the existing Lumina Hub. It is intentionally a clie
 - Runtime-capability-driven WiZ and Yeelight controls: power, brightness, CCT, RGB, native scene/speed, dual-zone ratio, white channels, and guarded experimental segment RGB.
 - Whole-home power and brightness controls with optimistic UI and Hub read-back.
 - Complete 37-mode catalog consumption with multi-zone target selection, brightness, and dynamic speed.
+- LAN-first Hub routing with `/api/v1/events` push updates, encrypted Relay fallback, no idle remote polling, and command-scoped device read-back.
 - Scene run/stop/create/update/delete.
 - Absolute timeline editor with per-device/per-zone tracks, sorted keyframes, `linear`/`step` easing, and every state field accepted by Hub API v1.
 - Weekly schedule editor using IANA time zones; the Hub remains the executor.

@@ -22,8 +22,10 @@ struct RunSceneIntent: LiveActivityIntent {
         store.save(.init(anyOn: true, selectedBrightness: nil))
         WidgetCenter.shared.reloadAllTimelines()
         do {
-            _ = try await LuminaAPIClient.shared.runScene(connection, sceneID: sceneID)
-            let devices = try? await LuminaAPIClient.shared.devices(connection)
+            let result = try await LuminaAPIClient.shared.runSceneWithReadBack(connection, sceneID: sceneID)
+            let devices = result.devices.isEmpty
+                ? (try? await LuminaAPIClient.shared.devices(connection))
+                : result.devices
             store.save(devices.map(WidgetControlSnapshot.inferred(from:))
                 ?? .init(anyOn: true, selectedBrightness: nil))
             WidgetCenter.shared.reloadAllTimelines()

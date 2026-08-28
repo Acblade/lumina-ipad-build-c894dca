@@ -46,6 +46,40 @@ final class APIClientTests: XCTestCase {
         XCTAssertEqual(run.status, "running")
     }
 
+    func testSceneRunDecodesCommandDeviceReadBack() async throws {
+        MockURLProtocol.handler = { request in
+            XCTAssertEqual(request.url?.path, "/api/v1/scenes/scene-1/run")
+            return (200, devicesCommandEnvelope)
+        }
+
+        let result = try await client().runSceneWithReadBack(
+            .init(baseURL: "https://lumina.example", bearerToken: "secret"),
+            sceneID: "scene-1"
+        )
+
+        XCTAssertEqual(result.run.id, "run-1")
+        XCTAssertEqual(result.devices.first?.id, "wiz:test")
+        XCTAssertEqual(result.devices.first?.zoneState("main").power, true)
+    }
+
+    func testLocalEndpointWinsWhenRelayIsAlsoConfigured() async throws {
+        MockURLProtocol.handler = { request in
+            XCTAssertEqual(request.url?.host, "192.0.2.10")
+            XCTAssertEqual(request.url?.path, "/api/v1/devices")
+            return (200, #"{"data":[]}"#)
+        }
+
+        let devices = try await client().devices(.init(
+            baseURL: "https://lumina-relay.workers.dev",
+            bearerToken: "secret",
+            cloudflareClientID: "client-id",
+            cloudflareClientSecret: "client-secret",
+            localBaseURL: "http://192.0.2.10:17890"
+        ))
+
+        XCTAssertTrue(devices.isEmpty)
+    }
+
     func testServerErrorUsesHubMessage() async {
         MockURLProtocol.handler = { _ in
             (401, #"{"error":{"code":"unauthorized","message":"Invalid bearer token","details":["Pair again"]}}"#)
@@ -67,6 +101,10 @@ final class APIClientTests: XCTestCase {
         return LuminaAPIClient(session: URLSession(configuration: configuration))
     }
 }
+
+private let devicesCommandEnvelope = """
+{"data":{"run":{"id":"run-1","sceneId":"scene-1","status":"running"},"devices":[{"id":"wiz:test","name":"测试灯","vendor":"wiz","online":true,"capabilities":{"zones":[{"id":"main","label":"主灯","power":true,"brightness":{"min":1,"max":100}}]},"state":{"zones":{"main":{"power":true,"brightness":50}}}}]}}
+"""
 
 private final class MockURLProtocol: URLProtocol {
     static var handler: ((URLRequest) throws -> (Int, String))?

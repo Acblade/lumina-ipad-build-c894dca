@@ -24,7 +24,8 @@ final class AppModel: ObservableObject {
     private let api: LuminaAPIClient
     private let settings: any ConnectionStore
     private let cache: any CacheStore
-    private var refreshTask: Task<Void, Never>?
+    private var localEventsTask: Task<Void, Never>?
+    private var commandReadBackTasks: [String: Task<Void, Never>] = [:]
     private var zoneControlSequence: [String: Int] = [:]
     private var zoneControlTails: [String: Task<Void, Never>] = [:]
 
@@ -43,7 +44,8 @@ final class AppModel: ObservableObject {
     }
 
     deinit {
-        refreshTask?.cancel()
+        localEventsTask?.cancel()
+        commandReadBackTasks.values.forEach { $0.cancel() }
         zoneControlTails.values.forEach { $0.cancel() }
     }
 
@@ -54,27 +56,36 @@ final class AppModel: ObservableObject {
     var isConfigured: Bool { connection.isConfigured && !connection.bearerToken.isEmpty }
 
     func beginForegroundRefresh() {
-        refreshTask?.cancel()
-        refreshTask = Task { [weak self] in
-            guard let self else { return }
-            await refreshAll(silent: true)
-            var deviceRefreshCount = 0
+        localEventsTask?.cancel()
+        guard !connection.effectiveLocalBaseURL.isEmpty else {
+            localEventsTask = nil
+            return
+        }
+        localEventsTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(3))
-                guard !Task.isCancelled else { break }
-                deviceRefreshCount += 1
-                if deviceRefreshCount.isMultiple(of: 5) {
-                    await refreshAll(silent: true)
-                } else {
-                    await refreshDevices(silent: true)
+                guard let self else { return }
+                let source = connection
+                guard !source.effectiveLocalBaseURL.isEmpty else { return }
+                do {
+                    let stream = await api.events(source)
+                    for try await event in stream {
+                        guard !Task.isCancelled, connection == source else { return }
+                        await apply(event, from: source)
+                    }
+                } catch is CancellationError {
+                    return
+                } catch {
+                    // A LAN event stream is opportunistic. Remote Relay is never
+                    // polled here; retry only the local stream after a short pause.
                 }
+                try? await Task.sleep(for: .seconds(5))
             }
         }
     }
 
     func stopForegroundRefresh() {
-        refreshTask?.cancel()
-        refreshTask = nil
+        localEventsTask?.cancel()
+        localEventsTask = nil
     }
 
     func refreshAll(silent: Bool = false) async {
@@ -82,14 +93,23 @@ final class AppModel: ObservableObject {
             if !silent { errorMessage = "请先在设置中连接 Lumina Hub" }
             return
         }
+        await refreshAll(using: connection, expectedConnection: connection, silent: silent)
+    }
+
+    private func refreshAll(
+        using requestedConnection: HubConnection,
+        expectedConnection: HubConnection,
+        silent: Bool
+    ) async {
         if !silent { isLoading = true }
         defer { if !silent { isLoading = false } }
         do {
-            async let loadedDevices = api.devices(connection)
-            async let loadedModes = api.modes(connection)
-            async let loadedScenes = api.scenes(connection)
-            async let loadedRuns = api.runs(connection)
+            async let loadedDevices = api.devices(requestedConnection)
+            async let loadedModes = api.modes(requestedConnection)
+            async let loadedScenes = api.scenes(requestedConnection)
+            async let loadedRuns = api.runs(requestedConnection)
             let values = try await (loadedDevices, loadedModes, loadedScenes, loadedRuns)
+            guard connection == expectedConnection else { return }
             devices = values.0.sorted { ($0.room ?? "", $0.name) < ($1.room ?? "", $1.name) }
             modes = values.1
             scenes = values.2
@@ -132,6 +152,7 @@ final class AppModel: ObservableObject {
             try await api.health(candidate)
             try settings.saveConnection(candidate)
             connection = candidate
+            beginForegroundRefresh()
             confirmationMessage = "Hub 已连接"
             await refreshAll(silent: true)
             return true
@@ -153,13 +174,16 @@ final class AppModel: ObservableObject {
             components.queryItems?.compactMap { item in item.value.map { (item.name, $0) } } ?? [],
             uniquingKeysWith: { _, latest in latest }
         )
+        let pairedBaseURL = values["baseURL"] ?? ""
+        let isRelay = pairedBaseURL.range(of: ".workers.dev", options: .caseInsensitive) != nil
         let candidate = HubConnection(
-            baseURL: values["baseURL"] ?? "",
-            bearerToken: values["token"] ?? ""
+            baseURL: isRelay ? pairedBaseURL : "",
+            bearerToken: values["token"] ?? "",
+            localBaseURL: isRelay ? "" : pairedBaseURL
         ).normalized
         guard candidate.isConfigured,
               !candidate.bearerToken.isEmpty,
-              let hubURL = URL(string: candidate.baseURL),
+              let hubURL = URL(string: pairedBaseURL),
               ["http", "https"].contains(hubURL.scheme?.lowercased() ?? ""),
               hubURL.user == nil,
               hubURL.password == nil,
@@ -218,8 +242,8 @@ final class AppModel: ObservableObject {
             _ = await predecessor?.result
             guard !Task.isCancelled else { return }
             do {
-                try await api.control(connection, deviceID: deviceID, action: action)
-                await self?.finishZoneControl(queueKey: queueKey, sequence: sequence)
+                let updated = try await api.control(connection, deviceID: deviceID, action: action)
+                await self?.finishZoneControl(queueKey: queueKey, sequence: sequence, updated: updated)
             } catch {
                 await self?.finishZoneControl(queueKey: queueKey, sequence: sequence, error: error)
             }
@@ -228,13 +252,22 @@ final class AppModel: ObservableObject {
         await operation.value
     }
 
-    private func finishZoneControl(queueKey: String, sequence: Int, error: Error? = nil) async {
+    private func finishZoneControl(
+        queueKey: String,
+        sequence: Int,
+        updated: Device? = nil,
+        error: Error? = nil
+    ) async {
         // Older requests are still sent in order, but they may never overwrite
         // the UI state or surface an error after a newer user action exists.
         guard zoneControlSequence[queueKey] == sequence else { return }
         zoneControlTails[queueKey] = nil
-        if let error { present(error) }
-        await refreshDevices()
+        if let error {
+            present(error)
+            await refreshDevices()
+            return
+        }
+        if let updated { applyDeviceReadBack(updated) }
     }
 
     func setAllPower(_ power: Bool) async {
@@ -253,7 +286,7 @@ final class AppModel: ObservableObject {
                     }
                     guard !actions.isEmpty else { continue }
                     group.addTask { [api, connection] in
-                        try await api.controlMany(connection, deviceID: device.id, actions: actions)
+                        _ = try await api.controlMany(connection, deviceID: device.id, actions: actions)
                     }
                 }
                 try await group.waitForAll()
@@ -283,7 +316,7 @@ final class AppModel: ObservableObject {
                     }
                     guard !actions.isEmpty else { continue }
                     group.addTask { [api, connection] in
-                        try await api.controlMany(connection, deviceID: device.id, actions: actions)
+                        _ = try await api.controlMany(connection, deviceID: device.id, actions: actions)
                     }
                 }
                 try await group.waitForAll()
@@ -384,17 +417,22 @@ final class AppModel: ObservableObject {
     func runScene(sceneID: String, displayName: String? = nil) async {
         guard isConfigured else { presentConfigurationError(); return }
         do {
-            let run = try await api.runScene(connection, sceneID: sceneID)
+            let result = try await api.runSceneWithReadBack(connection, sceneID: sceneID)
+            let run = result.run
+            if !result.devices.isEmpty { applyDeviceReadBack(result.devices) }
             runs.removeAll { $0.id == run.id }
             runs.insert(run, at: 0)
             let name = displayName ?? scenes.first(where: { $0.id == sceneID })?.name
             confirmationMessage = name.map { "正在运行“\($0)”" } ?? "场景已启动"
+            scheduleFinalReadBack(runID: run.id, sceneID: sceneID)
         } catch { present(error) }
     }
 
     func stopRun(_ run: RunInfo) async {
         do {
-            try await api.stopRun(connection, runID: run.id)
+            commandReadBackTasks.removeValue(forKey: run.id)?.cancel()
+            let result = try await api.stopRunWithReadBack(connection, runID: run.id)
+            if !result.devices.isEmpty { applyDeviceReadBack(result.devices) }
             runs.removeAll { $0.id == run.id }
             confirmationMessage = "场景已停止"
         } catch { present(error) }
@@ -402,6 +440,68 @@ final class AppModel: ObservableObject {
 
     func scene(id: String) -> Scene? { scenes.first { $0.id == id } }
     func device(id: String) -> Device? { devices.first { $0.id == id } }
+
+    private func apply(_ event: HubEvent, from source: HubConnection) async {
+        guard connection == source else { return }
+        switch event {
+        case .connected:
+            let localOnly = source.normalized
+            await refreshAll(
+                using: .init(
+                    baseURL: "",
+                    bearerToken: localOnly.bearerToken,
+                    cloudflareClientID: localOnly.cloudflareClientID,
+                    cloudflareClientSecret: localOnly.cloudflareClientSecret,
+                    localBaseURL: localOnly.effectiveLocalBaseURL
+                ),
+                expectedConnection: source,
+                silent: true
+            )
+        case let .deviceChanged(device):
+            applyDeviceReadBack(device)
+        case let .sceneChanged(scene):
+            scenes.removeAll { $0.id == scene.id }
+            scenes.append(scene)
+            scenes.sort { $0.name < $1.name }
+            cache.save(devices: devices, scenes: scenes, modes: modes)
+            WidgetCenter.shared.reloadAllTimelines()
+        case let .runChanged(run):
+            runs.removeAll { $0.id == run.id }
+            if ["running", "scheduled"].contains(run.status ?? "") { runs.insert(run, at: 0) }
+            if !["running", "scheduled"].contains(run.status ?? "") {
+                commandReadBackTasks.removeValue(forKey: run.id)?.cancel()
+            }
+        }
+    }
+
+    private func applyDeviceReadBack(_ updated: Device) {
+        if let index = devices.firstIndex(where: { $0.id == updated.id }) {
+            devices[index] = updated
+        } else {
+            devices.append(updated)
+        }
+        applyDeviceReadBack(devices)
+    }
+
+    private func applyDeviceReadBack(_ readBack: [Device]) {
+        devices = readBack.sorted { ($0.room ?? "", $0.name) < ($1.room ?? "", $1.name) }
+        isOnline = true
+        lastUpdated = Date()
+        cache.save(devices: devices, scenes: scenes, modes: modes)
+        SharedWidgetControlStore().save(.inferred(from: devices))
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    private func scheduleFinalReadBack(runID: String, sceneID: String) {
+        commandReadBackTasks.removeValue(forKey: runID)?.cancel()
+        let duration = scenes.first(where: { $0.id == sceneID })?.normalized.durationMs ?? 0
+        commandReadBackTasks[runID] = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(max(500, duration + 500)))
+            guard !Task.isCancelled, let self else { return }
+            await refreshDevices(silent: true)
+            commandReadBackTasks.removeValue(forKey: runID)
+        }
+    }
 
     private func applyOptimistic(deviceID: String, action: DeviceControlRequest) {
         guard let deviceIndex = devices.firstIndex(where: { $0.id == deviceID }),

@@ -63,6 +63,20 @@ final class ModelsTests: XCTestCase {
         XCTAssertNil(RGBColor(hex: "bad"))
     }
 
+    func testHubConnectionSeparatesLANAndRelayEndpoints() {
+        let connection = HubConnection(
+            baseURL: " https://lumina-relay.workers.dev/ ",
+            bearerToken: " token ",
+            localBaseURL: " http://192.0.2.10:17890/ "
+        ).normalized
+
+        XCTAssertEqual(connection.effectiveLocalBaseURL, "http://192.0.2.10:17890/")
+        XCTAssertEqual(connection.relayBaseURL, "https://lumina-relay.workers.dev/")
+        XCTAssertTrue(connection.isConfigured)
+        XCTAssertTrue(connection.usesRelay)
+        XCTAssertEqual(connection.bearerToken, "token")
+    }
+
 #if canImport(LuminaPad)
     func testAppGroupCandidatesKeepCanonicalIdentifierAndTryXtoolFallback() {
         XCTAssertEqual(

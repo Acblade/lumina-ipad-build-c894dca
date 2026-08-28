@@ -68,7 +68,9 @@ struct RootView: View {
                     .font(.title2.bold())
                 Text("确认连接到以下 Hub。Token 不会显示，也不会发送到其他服务。")
                     .foregroundStyle(.secondary)
-                Text(pairing.connection.baseURL)
+                Text(pairing.connection.effectiveLocalBaseURL.isEmpty
+                    ? pairing.connection.relayBaseURL
+                    : pairing.connection.effectiveLocalBaseURL)
                     .font(.body.monospaced())
                     .textSelection(.enabled)
                 if let errorMessage = model.errorMessage {

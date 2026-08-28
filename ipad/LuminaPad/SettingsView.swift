@@ -2,7 +2,8 @@ import SwiftUI
 
 struct SettingsView: View {
     @EnvironmentObject private var model: AppModel
-    @State private var baseURL = ""
+    @State private var localBaseURL = ""
+    @State private var relayBaseURL = ""
     @State private var token = ""
     @State private var cloudflareID = ""
     @State private var cloudflareSecret = ""
@@ -44,8 +45,13 @@ struct SettingsView: View {
                 .font(.title3.bold())
                 .foregroundStyle(LuminaTheme.midnight)
 
-            LuminaField(title: "网关地址", icon: "network") {
-                TextField("http://192.168.x.x:17890", text: $baseURL)
+            LuminaField(title: "家庭局域网 Hub", icon: "network") {
+                TextField("http://192.168.x.x:17890", text: $localBaseURL)
+                    .textInputAutocapitalization(.never)
+                    .keyboardType(.URL)
+            }
+            LuminaField(title: "远程 Relay（可选）", icon: "cloud.fill") {
+                TextField("https://…workers.dev", text: $relayBaseURL)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
             }
@@ -71,10 +77,11 @@ struct SettingsView: View {
             Button {
                 Task {
                     _ = await model.saveConnection(.init(
-                        baseURL: baseURL,
+                        baseURL: relayBaseURL,
                         bearerToken: token,
                         cloudflareClientID: cloudflareID,
-                        cloudflareClientSecret: cloudflareSecret
+                        cloudflareClientSecret: cloudflareSecret,
+                        localBaseURL: localBaseURL
                     ))
                 }
             } label: {
@@ -85,7 +92,7 @@ struct SettingsView: View {
             }
             .buttonStyle(.borderedProminent)
             .tint(LuminaTheme.indigo)
-            .disabled(baseURL.isEmpty || token.isEmpty || model.isLoading)
+            .disabled((localBaseURL.isEmpty && relayBaseURL.isEmpty) || token.isEmpty || model.isLoading)
         }
         .luminaCard(padding: 22, cornerRadius: 30)
     }
@@ -149,7 +156,8 @@ struct SettingsView: View {
     }
 
     private func load() {
-        baseURL = model.connection.baseURL
+        localBaseURL = model.connection.effectiveLocalBaseURL
+        relayBaseURL = model.connection.relayBaseURL
         token = model.connection.bearerToken
         cloudflareID = model.connection.cloudflareClientID
         cloudflareSecret = model.connection.cloudflareClientSecret

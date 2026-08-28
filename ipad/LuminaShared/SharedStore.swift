@@ -123,6 +123,7 @@ enum LuminaShared {
 struct SharedSettings: ConnectionStore {
     private enum Key {
         static let baseURL = "hub.baseURL"
+        static let localBaseURL = "hub.localBaseURL"
         static let cloudflareID = "hub.cloudflareID"
         static let bearerToken = "hub.bearerToken"
         static let cloudflareSecret = "hub.cloudflareSecret"
@@ -135,13 +136,15 @@ struct SharedSettings: ConnectionStore {
             baseURL: defaults.string(forKey: Key.baseURL) ?? "",
             bearerToken: SharedSecretStore.read(Key.bearerToken),
             cloudflareClientID: defaults.string(forKey: Key.cloudflareID) ?? "",
-            cloudflareClientSecret: SharedSecretStore.read(Key.cloudflareSecret)
+            cloudflareClientSecret: SharedSecretStore.read(Key.cloudflareSecret),
+            localBaseURL: defaults.string(forKey: Key.localBaseURL) ?? ""
         )
     }
 
     func saveConnection(_ connection: HubConnection) throws {
         let value = connection.normalized
         defaults.set(value.baseURL, forKey: Key.baseURL)
+        defaults.set(value.localBaseURL, forKey: Key.localBaseURL)
         defaults.set(value.cloudflareClientID, forKey: Key.cloudflareID)
         try SharedSecretStore.write(value.bearerToken, key: Key.bearerToken)
         try SharedSecretStore.write(value.cloudflareClientSecret, key: Key.cloudflareSecret)
