@@ -44,22 +44,18 @@ enum LuminaShared {
         return candidates
     }
 
-    /// Xtool prefixes free-provisioned bundle identifiers with `XTL-<TeamID>.`.
-    /// The signing prefix itself does not include `XTL-`, so derive the Keychain
-    /// access group that both the app and its widget extension can open.
+    /// Third-party Xtool profiles rewrite bundle identifiers but do not preserve
+    /// Lumina's requested App Group or Keychain access group. Supplying a guessed
+    /// group makes securityd reject every snapshot write with errSecMissingEntitlement.
+    /// Keep those installs app-private instead of repeatedly probing unavailable
+    /// shared containers/groups. Proper Apple provisioning still uses the configured
+    /// shared Keychain group below.
     static func keychainGroupCandidates(
         for bundleIdentifier: String?,
         configuredGroup: String?
     ) -> [String] {
+        if isXtoolProvisioned(bundleIdentifier: bundleIdentifier) { return [] }
         var candidates: [String] = []
-        if let bundleIdentifier,
-           bundleIdentifier.hasPrefix("XTL-"),
-           let separator = bundleIdentifier.firstIndex(of: ".") {
-            let encodedTeam = bundleIdentifier[bundleIdentifier.index(bundleIdentifier.startIndex, offsetBy: 4)..<separator]
-            if !encodedTeam.isEmpty {
-                candidates.append("\(encodedTeam).\(canonicalBundleRoot).shared")
-            }
-        }
         if let configuredGroup = configuredGroup?.trimmingCharacters(in: .whitespacesAndNewlines),
            !configuredGroup.isEmpty,
            !candidates.contains(configuredGroup) {
@@ -69,6 +65,10 @@ enum LuminaShared {
     }
 
     private static var sharedContainer: (identifier: String, url: URL)? {
+        // Xtool's third-party profile contains unrelated preallocated App Groups.
+        // Asking iOS for Lumina's canonical or bundle-derived groups logs an
+        // entitlement failure on every refresh and can starve the foreground UI.
+        guard !usesXtoolProvisioning else { return nil }
         for identifier in appGroupCandidates(for: Bundle.main.bundleIdentifier) {
             if let url = FileManager.default.containerURL(
                 forSecurityApplicationGroupIdentifier: identifier

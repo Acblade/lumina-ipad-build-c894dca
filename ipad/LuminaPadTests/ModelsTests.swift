@@ -98,14 +98,14 @@ final class ModelsTests: XCTestCase {
                 for: "XTL-1234ABCD.com.sigo.lumina.ipad",
                 configuredGroup: "com.sigo.lumina.shared"
             ),
-            ["1234ABCD.com.sigo.lumina.shared", "com.sigo.lumina.shared"]
+            []
         )
         XCTAssertEqual(
             LuminaShared.keychainGroupCandidates(
                 for: "XTL-1234ABCD.com.sigo.lumina.ipad.widget",
                 configuredGroup: nil
             ),
-            ["1234ABCD.com.sigo.lumina.shared"]
+            []
         )
         XCTAssertEqual(
             LuminaShared.keychainGroupCandidates(

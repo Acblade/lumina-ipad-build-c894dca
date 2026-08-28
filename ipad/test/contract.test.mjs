@@ -307,7 +307,8 @@ test("free signing falls back safely when App Group containers are unavailable",
   assert.match(store, /case appPrivateKeychain/);
   assert.match(store, /hasSharedContainer \? \.sharedProtectedFile : \.appPrivateKeychain/);
   assert.match(store, /Keychain\.write\(value, key: key, accessGroup: nil\)/);
-  assert.match(store, /encodedTeam.*canonicalBundleRoot.*shared/s);
+  assert.match(store, /isXtoolProvisioned\(bundleIdentifier: bundleIdentifier\) \{ return \[\] \}/);
+  assert.match(store, /guard !usesXtoolProvisioning else \{ return nil \}/);
   assert.match(store, /Data\(base64Encoded: encoded\)/);
   assert.match(store, /Keychain\.write\(encoded, key: Self\.key, accessGroup: accessGroup\)/);
   assert.match(store, /return \.standard/);
