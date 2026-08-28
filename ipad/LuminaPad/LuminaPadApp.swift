@@ -9,7 +9,12 @@ struct LuminaPadApp: App {
         WindowGroup {
             RootView()
                 .environmentObject(model)
-                .task { model.beginForegroundRefresh() }
+                .task {
+#if DEBUG
+                    await model.importConnectionFromLaunchArguments()
+#endif
+                    model.beginForegroundRefresh()
+                }
                 .onOpenURL { url in
                     Task { await model.handleDeepLink(url) }
                 }

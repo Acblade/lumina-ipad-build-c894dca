@@ -55,6 +55,29 @@ final class AppModel: ObservableObject {
 
     var isConfigured: Bool { connection.isConfigured && !connection.bearerToken.isEmpty }
 
+#if DEBUG
+    static func connectionFromLaunchArguments(_ arguments: [String]) -> HubConnection? {
+        let prefix = "--lumina-bootstrap="
+        guard let encoded = arguments.first(where: { $0.hasPrefix(prefix) }).map({ String($0.dropFirst(prefix.count)) }) else {
+            return nil
+        }
+        var base64 = encoded.replacingOccurrences(of: "-", with: "+").replacingOccurrences(of: "_", with: "/")
+        base64 += String(repeating: "=", count: (4 - base64.count % 4) % 4)
+        guard let data = Data(base64Encoded: base64),
+              let candidate = try? JSONDecoder().decode(HubConnection.self, from: data) else {
+            return nil
+        }
+        let normalized = candidate.normalized
+        guard normalized.isConfigured, !normalized.bearerToken.isEmpty else { return nil }
+        return normalized
+    }
+
+    func importConnectionFromLaunchArguments(_ arguments: [String] = ProcessInfo.processInfo.arguments) async {
+        guard let candidate = Self.connectionFromLaunchArguments(arguments) else { return }
+        _ = await saveConnection(candidate)
+    }
+#endif
+
     func beginForegroundRefresh() {
         localEventsTask?.cancel()
         guard !connection.effectiveLocalBaseURL.isEmpty else {

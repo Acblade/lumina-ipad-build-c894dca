@@ -104,6 +104,26 @@ final class AppModelTests: XCTestCase {
         XCTAssertEqual(requestCount, 0)
     }
 
+#if DEBUG
+    func testLaunchBootstrapDecodesSeparateLANAndRelayEndpoints() throws {
+        let expected = HubConnection(
+            baseURL: "https://lumina-relay.workers.dev",
+            bearerToken: "test-token",
+            cloudflareClientID: "ipad-id",
+            cloudflareClientSecret: "ipad-secret",
+            localBaseURL: "http://192.0.2.10:17890"
+        )
+        let encoded = try JSONEncoder().encode(expected).base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+
+        let decoded = AppModel.connectionFromLaunchArguments(["Lumina", "--lumina-bootstrap=\(encoded)"])
+
+        XCTAssertEqual(decoded, expected)
+    }
+#endif
+
     func testFailedPairingRemainsAvailableForPermissionRetry() async throws {
         AppModelURLProtocol.handler = { request in
             XCTAssertEqual(request.url?.path, "/api/v1/health")
